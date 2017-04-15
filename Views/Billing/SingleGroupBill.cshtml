@@ -348,81 +348,86 @@
 
     for (int i = 0; i < Model.Matters[j].TimeGroups.Count; i++)
     {
-        <div style="text-align: left; margin: 5px 0 0 0; padding: 2px 0px 2px 5px;
-        font-size: 12px; font-weight: bold; border-collapse: collapse;
-        border-top-left-radius: 5px; border-top-right-radius: 5px; -moz-border-top-left-radius: 5px;
-        -moz-border-top-right-radius: 5px; background: #f5f5f5;">Time: @Model.Matters[j].TimeGroups[i].GroupName</div>
-        
-        <div style="border: none; padding: 0;">            
-            <table class="table-striped table-condensed" cellpadding="0" cellspacing="0" style="border: none; width: 100%; font-size: 10px; line-height: 11px;">
-                <thead style="background: #dddddd; text-align: center; font-weight: bold;">
-                    <tr>
-                        <td style="width: 100px;">
-                            Date
-                        </td>
-                        <td>
-                            Details
-                        </td>
-                        <td style="width: 120px;">
-                            Duration (h:m)
-                        </td>
-                        <td style="width: 100px;">
-                            Rate ($/hr.)
-                        </td>  
-                    </tr>      
-                </thead>
-                <tbody>
-                @{ altRow = true;}
-                @for (int k = 0; k < Model.Matters[j].TimeGroups[i].Times.Count; k++)
-                {
-                    OpenLawOffice.Web.ViewModels.Billing.InvoiceTimeViewModel item = Model.Matters[j].TimeGroups[i].Times[k];
-                    altRow = !altRow;
-                    if (altRow)
-                    {
-                        <tr class="tr_alternate">
-                            <td>@(item.Time.Start.ToShortDateString())</td>
-                            <td>@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].Details, new { @style = "width: 100%; font-size: 11px;" }))</td>
-                            <td style="text-align: center;">
-                                @(TimeSpanHelper.TimeSpan(item.Time.Duration, false))@(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Duration))
-                                @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Time.Id))
-                            </td>
-                            <td style="text-align: center;">$@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].PricePerHour, new { @style = "width: 75px; font-size: 11px;" }))</td>
-                        </tr>
-                    }
-                    else
-                    {
+        if (Model.Matters[j].TimeGroups[i] != null)
+        {
+            <div style="text-align: left; margin: 5px 0 0 0; padding: 2px 0px 2px 5px;
+            font-size: 12px; font-weight: bold; border-collapse: collapse;
+            border-top-left-radius: 5px; border-top-right-radius: 5px; -moz-border-top-left-radius: 5px;
+            -moz-border-top-right-radius: 5px; background: #f5f5f5;">Time: @Model.Matters[j].TimeGroups[i].GroupName</div>
+
+            <div style="border: none; padding: 0;">            
+                <table class="table-striped table-condensed" cellpadding="0" cellspacing="0" style="border: none; width: 100%; font-size: 10px; line-height: 11px;">
+                    <thead style="background: #dddddd; text-align: center; font-weight: bold;">
                         <tr>
-                            <td>@(item.Time.Start.ToShortDateString())</td>
-                            <td>@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].Details, new { @style = "width: 100%; font-size: 11px;" }))</td>
-                            <td style="text-align: center;">@(TimeSpanHelper.TimeSpan(item.Time.Duration, false))@(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Duration))
-                                @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Time.Id))</td>
-                            <td style="text-align: center;">$@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].PricePerHour, new { @style = "width: 75px; font-size: 11px;" }))</td>
-                        </tr>
-                    }
-                }
-                @if (Model.Matters[j].TimeGroups[i].Times.Count <= 0)
-                {
-                    altRow = !altRow;
-                    if (altRow)
-                    {
-                        <tr class="tr_alternate">
-                            <td colspan="4" style="text-align: center;">
-                                No Time
+                            <td style="width: 100px;">
+                                Date
                             </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="4" style="text-align: center;">
-                                No Time
+                            <td>
+                                Details
                             </td>
-                        </tr>
+                            <td style="width: 120px;">
+                                Duration (h:m)
+                            </td>
+                            <td style="width: 100px;">
+                                Rate ($/hr.)
+                            </td>  
+                        </tr>      
+                    </thead>
+                    <tbody>
+                    @{ altRow = true;}
+                    @for (int k = 0; k < Model.Matters[j].TimeGroups[i].Times.Count; k++)
+                    {
+                        OpenLawOffice.Web.ViewModels.Billing.InvoiceTimeViewModel item = Model.Matters[j].TimeGroups[i].Times[k];
+                        altRow = !altRow;
+                        if (altRow)
+                        {
+                            <tr class="tr_alternate">
+                                <td>@(item.Time.Start.ToShortDateString())</td>
+                                <td>@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].Details, new { @style = "width: 100%; font-size: 11px;" }))</td>
+                                <td style="text-align: center;">
+                                    @(TimeSpanHelper.TimeSpan(item.Time.Duration, false))@(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Duration))
+                                    @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Time.Id))
+                                </td>
+                                <td style="text-align: center;">$@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].PricePerHour, new { @style = "width: 75px; font-size: 11px;" }))</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@(item.Time.Start.ToShortDateString())</td>
+                                <td>@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].Details, new { @style = "width: 100%; font-size: 11px;" }))</td>
+                                <td style="text-align: center;">@(TimeSpanHelper.TimeSpan(item.Time.Duration, false))@(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Duration))
+                                    @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i].Times[k].Time.Id))</td>
+                                <td style="text-align: center;">$@(Html.TextBoxFor(x => x.Matters[j].TimeGroups[i].Times[k].PricePerHour, new { @style = "width: 75px; font-size: 11px;" }))</td>
+                            </tr>
+                        }
                     }
-                }
-                </tbody>
-            </table>
-        </div>
+                    @if (Model.Matters[j].TimeGroups[i].Times.Count <= 0)
+                    {
+                        altRow = !altRow;
+                        if (altRow)
+                        {
+                            <tr class="tr_alternate">
+                                <td colspan="4" style="text-align: center;">
+                                    No Time
+                                    @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i]))
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" style="text-align: center;">
+                                    No Time
+                                    @(Html.HiddenFor(x => x.Matters[j].TimeGroups[i]))
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+            }
         }
     }
     </div>

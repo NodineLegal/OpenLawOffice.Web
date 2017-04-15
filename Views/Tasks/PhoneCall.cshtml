@@ -25,6 +25,9 @@
             else
                 $("#NoteAndTaskLabel").text("Task Details");
         })
+        $('#ClearNoticeButton').click(function () {
+            $('#NotifyContactIds').val([]);
+        });
     });
 </script>
 
@@ -79,6 +82,18 @@
                         <div class="col-sm-10">
                             @(Html.CheckBoxFor(model => model.MakeNote, new { @Checked = true, @class = "form-control", @style = "width: 50px; display: inline;" }))
                             Check to create a note.
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <span class="control-label col-sm-2">
+                                Time Category
+                            </span>
+                            <div class="col-sm-5">
+                                @(Html.DropDownListFor(model => model.TimeCategory.Id,
+                        new SelectList(ViewBag.TimeCategoryList, "Id", "Title"),
+                        new { @size = 1, @class = "form-control", @style = "width: 100%" }))
+                            </div>
                         </div>
                     </div>
                     <div id="StartRow" class="form-group">

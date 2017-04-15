@@ -28,6 +28,8 @@ namespace OpenLawOffice.Web.ViewModels.Tasks
     
     public class PhoneCallViewModel : CoreViewModel
     {
+        public Timing.TimeCategoryViewModel TimeCategory { get; set; }
+
         public DateTime Start { get; set; }
 
         public DateTime Stop { get; set; }

@@ -514,6 +514,7 @@ namespace OpenLawOffice.Web.Controllers
 
                     if (billingRate != null)
                         vm.PricePerHour = billingRate.PricePerUnit;
+
                     ViewModels.Billing.InvoiceTimeGroupViewModel timeGroup;
                     if (x.TimeCategory == null || !x.TimeCategory.Id.HasValue)
                         timeGroup = giivm.TimeGroups.SingleOrDefault(y => y.Id == 0);
@@ -534,6 +535,12 @@ namespace OpenLawOffice.Web.Controllers
                     else
                         timeGroup.Times.Add(vm);
                 });
+                // On instantiation, GroupInvoiceItemViewModel.TimeGroups has the first element created as "Standard"
+                // if it is not used, we need to drop it
+                if (giivm.TimeGroups.Count > 1 && giivm.TimeGroups[0].Times.Count == 0)
+                {
+                    giivm.TimeGroups.RemoveAt(0);
+                }
 
                 Data.Billing.Expense.ListUnbilledExpensesForMatter(matter.Id.Value, startDate, stopDate, conn, false).ForEach(x =>
                 {
@@ -644,34 +651,37 @@ namespace OpenLawOffice.Web.Controllers
                     // Validation
 
                     // Loop for each matter
-                    for (int j = 0; j < viewModel.Matters.Count; j++)
+                    for (int i = 0; i < viewModel.Matters.Count; i++)
                     {
                         ViewModels.Billing.GroupInvoiceItemViewModel giivm =
-                            builtGroupInvoice.Matters.Single(x => x.Matter.Id.Value == viewModel.Matters[j].Matter.Id.Value);
+                            builtGroupInvoice.Matters.Single(x => x.Matter.Id.Value == viewModel.Matters[i].Matter.Id.Value);
 
-                        for (int i = 0; i < viewModel.Matters[j].Expenses.Count; i++)
+                        for (int j = 0; j < viewModel.Matters[i].Expenses.Count; j++)
                         {
-                            ievm = giivm.Expenses.Single(x => x.Expense.Id.Value == viewModel.Matters[j].Expenses[i].Expense.Id.Value);
-                            viewModel.Matters[j].Expenses[i].Expense = ievm.Expense;
-                            if (string.IsNullOrEmpty(viewModel.Matters[j].Expenses[i].Details))
-                                ModelState.AddModelError(string.Format("Matters[{0}].Expenses[{1}].Details", j, i), "Required");
+                            ievm = giivm.Expenses.Single(x => x.Expense.Id.Value == viewModel.Matters[i].Expenses[j].Expense.Id.Value);
+                            viewModel.Matters[i].Expenses[j].Expense = ievm.Expense;
+                            if (string.IsNullOrEmpty(viewModel.Matters[i].Expenses[j].Details))
+                                ModelState.AddModelError(string.Format("Matters[{0}].Expenses[{1}].Details", i, j), "Required");
                         };
-                        for (int i = 0; i < viewModel.Matters[j].Fees.Count; i++)
+                        for (int j = 0; j < viewModel.Matters[i].Fees.Count; j++)
                         {
-                            ifvm = giivm.Fees.Single(x => x.Fee.Id.Value == viewModel.Matters[j].Fees[i].Fee.Id.Value);
-                            viewModel.Matters[j].Fees[i].Fee = ifvm.Fee;
-                            if (string.IsNullOrEmpty(viewModel.Matters[j].Fees[i].Details))
-                                ModelState.AddModelError(string.Format("Matters[{0}].Fees[{1}].Details", j, i), "Required");
+                            ifvm = giivm.Fees.Single(x => x.Fee.Id.Value == viewModel.Matters[i].Fees[j].Fee.Id.Value);
+                            viewModel.Matters[i].Fees[j].Fee = ifvm.Fee;
+                            if (string.IsNullOrEmpty(viewModel.Matters[i].Fees[j].Details))
+                                ModelState.AddModelError(string.Format("Matters[{0}].Fees[{1}].Details", i, j), "Required");
                         };
-                        for (int i = 0; i < viewModel.Matters[j].TimeGroups.Count; i++)
+                        for (int j = 0; j < viewModel.Matters[i].TimeGroups.Count; j++)
                         {
-                            for (int k = 0; k < viewModel.Matters[j].TimeGroups[i].Times.Count; k++)
+                            if (viewModel.Matters[i].TimeGroups[j] != null)
                             {
-                                itvm = giivm.TimeGroups[i].Times.Single(x => x.Time.Id.Value == viewModel.Matters[j].TimeGroups[i].Times[k].Time.Id);
-                                viewModel.Matters[j].TimeGroups[i].Times[k].Time = itvm.Time;
-                                if (string.IsNullOrEmpty(viewModel.Matters[j].TimeGroups[i].Times[k].Details))
-                                    ModelState.AddModelError(string.Format("Matters[{0}].TimeGroups[{1}].Times[{2}].Details", j, i, k), "Required");
-                            };
+                                for (int k = 0; k < viewModel.Matters[i].TimeGroups[j].Times.Count; k++)
+                                {
+                                    itvm = giivm.TimeGroups[j].Times.Single(x => x.Time.Id.Value == viewModel.Matters[i].TimeGroups[j].Times[k].Time.Id);
+                                    viewModel.Matters[i].TimeGroups[j].Times[k].Time = itvm.Time;
+                                    if (string.IsNullOrEmpty(viewModel.Matters[i].TimeGroups[j].Times[k].Details))
+                                        ModelState.AddModelError(string.Format("Matters[{0}].TimeGroups[{1}].Times[{2}].Details", i, j, k), "Required");
+                                }
+                            }
                         }
                     }
 
@@ -686,6 +696,18 @@ namespace OpenLawOffice.Web.Controllers
                         ViewData["FirmZip"] = Common.Settings.Manager.Instance.System.BillingFirmZip;
                         ViewData["FirmPhone"] = Common.Settings.Manager.Instance.System.BillingFirmPhone;
                         ViewData["FirmWeb"] = Common.Settings.Manager.Instance.System.BillingFirmWeb;
+
+
+                        IEnumerator<KeyValuePair<string, System.Web.Mvc.ModelState>> en = ModelState.GetEnumerator();
+                        while (en.MoveNext())
+                        {
+                            if (en.Current.Value.Errors.Count > 0)
+                            {
+                                string a = en.Current.Key;
+                                ModelState ms = en.Current.Value;
+                            }
+                        }
+
                         return View(viewModel);
                     }
 

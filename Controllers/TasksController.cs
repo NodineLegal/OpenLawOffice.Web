@@ -485,7 +485,12 @@ namespace OpenLawOffice.Web.Controllers
 
             return View(new ViewModels.Tasks.CreateTaskViewModel()
             {
-                TaskTemplates = viewModel.TaskTemplates,               
+                TaskTemplates = viewModel.TaskTemplates,
+                Task = new ViewModels.Tasks.TaskViewModel()
+                {
+                    DueDate = DateTime.Today.AddHours(17),
+                    Active = true
+                },         
                 TaskContact = new ViewModels.Tasks.TaskAssignedContactViewModel()
                 {
                     AssignmentType = ViewModels.AssignmentTypeViewModel.Direct,
@@ -578,6 +583,7 @@ namespace OpenLawOffice.Web.Controllers
             string title;
             Common.Models.Matters.Matter matter;
             Common.Models.Account.Users currentUser;
+            List<Common.Models.Timing.TimeCategory> timeCategoryList;
             List<ViewModels.Contacts.ContactViewModel> employeeContactList;
 
             employeeContactList = new List<ViewModels.Contacts.ContactViewModel>();
@@ -590,6 +596,13 @@ namespace OpenLawOffice.Web.Controllers
                 Data.Contacts.Contact.ListEmployeesOnly(conn, false).ForEach(x =>
                 {
                     employeeContactList.Add(Mapper.Map<ViewModels.Contacts.ContactViewModel>(x));
+                });
+
+                timeCategoryList = Data.Timing.TimeCategory.List(conn, false);
+                timeCategoryList.Insert(0, new Common.Models.Timing.TimeCategory()
+                {
+                    Id = 0,
+                    Title = "Standard"
                 });
             }
 
@@ -610,11 +623,13 @@ namespace OpenLawOffice.Web.Controllers
             }
 
             ViewBag.Matter = matter;
+            ViewBag.TimeCategoryList = timeCategoryList;
 
             return View(new ViewModels.Tasks.PhoneCallViewModel()
             {
                 MakeTime = true,
                 MakeNote = true,
+                TimeCategory = new ViewModels.Timing.TimeCategoryViewModel() { Id = 0 },
                 Start = DateTime.Now,
                 Stop = DateTime.Now.AddMinutes(6),
                 Billable = true,
@@ -669,6 +684,7 @@ namespace OpenLawOffice.Web.Controllers
                         Details = viewModel.TimeDetails,
                         Start = viewModel.Start,
                         Stop = viewModel.Stop,
+                        TimeCategory = new Common.Models.Timing.TimeCategory() { Id = viewModel.TimeCategory.Id.Value },
                         Worker = new Common.Models.Contacts.Contact() { Id = contactId }
                     };
 
