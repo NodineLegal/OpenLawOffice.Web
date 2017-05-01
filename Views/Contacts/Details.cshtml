@@ -9,7 +9,7 @@
 @section Breadcrumb {
     <ul class="breadcrumb">
         <li><a href="/Contacts">Contacts</a></li>
-        <li>Contact: <a href="/Contacts/Details" class="active">@(Model.DisplayName)</a></li>
+        <li>Contact: <a href="/Contacts/Details/@Model.Id" class="active">@(Model.DisplayName)</a></li>
     </ul>
 }
 
@@ -55,326 +55,151 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        General
+        <span class="h4">
+            @Model.DisplayName
+            @if (Model.IsOrganization)
+            {<text>(Company)</text>}
+            else
+            {<text>(Individual)</text>}
+            @if (Model.IsOurEmployee)
+            {<text>(<strong style="color: red;">EMPLOYEE</strong>)</text>}
+        </span>
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-2">Id:</div>
-            <div class="col-sm-3">@(Model.Id)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Our Employee:</div>
+            <div class="col-sm-2">Name:</div>
             <div class="col-sm-3">
-                @(Model.IsOurEmployee)
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Is an Organization:</div>
-            <div class="col-sm-3">@(Model.IsOrganization)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">
-                @if (Model.IsOurEmployee && Model.BillingRate != null && Model.BillingRate.Id.HasValue)
+                @if (!string.IsNullOrEmpty(Model.GivenName))
                 {
-                    <text>Rate:</text>
+                    <text>@Model.GivenName </text>
+                }
+                @if (!string.IsNullOrEmpty(Model.MiddleName))
+                {
+                    <text>@Model.MiddleName </text>
+                }
+                @if (!string.IsNullOrEmpty(Model.Surname))
+                {
+                    <text>@Model.Surname </text>
+                }
+                @if (!string.IsNullOrEmpty(Model.Generation))
+                {
+                    <text>@Model.Generation </text>
                 }
             </div>
+            <div class="col-sm-2">Referral Source:</div>
             <div class="col-sm-3">
-            @if (Model.IsOurEmployee && Model.BillingRate != null && Model.BillingRate.Id.HasValue)
-            {
-                @(Model.BillingRate.Title) <text>(</text>@(Model.BillingRate.PricePerUnit.ToString("C"))<text>)</text>
-            }
+                @Model.ReferredByName
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">Mailing Address:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Address1AddressStreet) && !string.IsNullOrEmpty(Model.Address1AddressCity))
+                {
+                    string alink = Model.Address1AddressStreet;
+                    if (!string.IsNullOrEmpty(Model.Address1AddressLine2))
+                    {
+                        alink += " " + Model.Address1AddressLine2;
+                    }
+                    if (!string.IsNullOrEmpty(Model.Address1AddressCity))
+                    {
+                        alink += ", " + Model.Address1AddressCity;
+                    }
+                    if (!string.IsNullOrEmpty(Model.Address1AddressStateOrProvince))
+                    {
+                        alink += ", " + Model.Address1AddressStateOrProvince;
+                    }
+                    <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                        @Model.Address1AddressStreet<br />
+                        @if (!string.IsNullOrEmpty(Model.Address1AddressLine2))
+                        {<text>@Model.Address1AddressLine2<br /></text>}
+                        @Model.Address1AddressCity, @Model.Address1AddressStateOrProvince @Model.Address1AddressPostalCode
+                    </a></text>
+                } else {
+                    <text>
+                    @Model.Address1AddressStreet<br />
+                    @if (!string.IsNullOrEmpty(Model.Address1AddressLine2))
+                    {<text>@Model.Address1AddressLine2<br /></text>}
+                    @Model.Address1AddressCity, @Model.Address1AddressStateOrProvince @Model.Address1AddressPostalCode
+                    </text>
+                }
+            </div>
+            <div class="col-sm-2">Physical Address:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Address2AddressStreet) && !string.IsNullOrEmpty(Model.Address2AddressCity))
+                {
+                    string alink = Model.Address2AddressStreet;
+                    if (!string.IsNullOrEmpty(Model.Address2AddressLine2))
+                    {
+                        alink += " " + Model.Address2AddressLine2;
+                    }
+                    if (!string.IsNullOrEmpty(Model.Address2AddressCity))
+                    {
+                        alink += ", " + Model.Address2AddressCity;
+                    }
+                    if (!string.IsNullOrEmpty(Model.Address2AddressStateOrProvince))
+                    {
+                        alink += ", " + Model.Address2AddressStateOrProvince;
+                    }
+                    <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                            @Model.Address2AddressStreet<br />
+                            @if (!string.IsNullOrEmpty(Model.Address2AddressLine2))
+                            {<text>@Model.Address2AddressLine2<br /></text>}
+                            @Model.Address2AddressCity, @Model.Address2AddressStateOrProvince @Model.Address2AddressPostalCode
+                        </a></text>
+                }
+                else
+                {
+                    <text>
+                        @Model.Address2AddressStreet<br />
+                        @if (!string.IsNullOrEmpty(Model.Address2AddressLine2))
+                        {<text>@Model.Address2AddressLine2<br /></text>}
+                        @Model.Address2AddressCity, @Model.Address2AddressStateOrProvince @Model.Address2AddressPostalCode
+                    </text>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">Phone 1:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Telephone1TelephoneNumber))
+                { <text><a href="tel:@Model.Telephone1TelephoneNumber">@Model.Telephone1TelephoneNumber</a></text>}
+            </div>
+            <div class="col-sm-2">Phone 2:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Telephone1TelephoneNumber))
+                { <text><a href="tel:@Model.Telephone2TelephoneNumber">@Model.Telephone2TelephoneNumber</a></text>}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">Email:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Email1EmailAddress))
+                { <text><a href="mailto:@Model.Email1EmailAddress">@Model.Email1EmailAddress</a></text>}
+            </div>
+            <div class="col-sm-2">Fax:</div>
+            <div class="col-sm-3">
+                @if (!string.IsNullOrEmpty(Model.Fax1FaxNumber))
+                { <text><a href="tel:@Model.Fax1FaxNumber">@Model.Fax1FaxNumber</a></text>}
             </div>
         </div>
     </div>
 </div>
+
 <div class="panel panel-default">
     <div class="panel-heading">
-        Contact Name
+        Personal Details
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-2">Nickname:</div>
-            <div class="col-sm-3">@(Model.Nickname)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Generation:</div>
-            <div class="col-sm-3">@(Model.Generation)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Display Name Prefix:</div>
-            <div class="col-sm-3">@(Model.DisplayNamePrefix)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Display Name:</div>
-            <div class="col-sm-3">@(Model.DisplayName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Surname (Last):</div>
-            <div class="col-sm-3">@(Model.Surname)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Middle Name:</div>
-            <div class="col-sm-3">@(Model.MiddleName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Given (First) Name:</div>
-            <div class="col-sm-3">@(Model.GivenName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Initials:</div>
-            <div class="col-sm-3">@(Model.Initials)</div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Electronic Addresses
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Email 1 Display Name:</div>
-            <div class="col-sm-3">@(Model.Email1DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Email 1 Email Address:</div>
-            <div class="col-sm-3">@(Model.Email1EmailAddress)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Email 2 Display Name:</div>
-            <div class="col-sm-3">@(Model.Email2DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Email 2 Email Address:</div>
-            <div class="col-sm-3">@(Model.Email2EmailAddress)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Email 3 Display Name:</div>
-            <div class="col-sm-3">@(Model.Email3DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Email 3 Email Address:</div>
-            <div class="col-sm-3">@(Model.Email3EmailAddress)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Fax 1 Display Name:</div>
-            <div class="col-sm-3">@(Model.Fax1DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Fax 1 Fax Number:</div>
-            <div class="col-sm-3">@(Model.Fax1FaxNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Fax 2 Display Name:</div>
-            <div class="col-sm-3">@(Model.Fax2DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Fax 2 Fax Number:</div>
-            <div class="col-sm-3">@(Model.Fax2FaxNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Fax 3 Display Name:</div>
-            <div class="col-sm-3">@(Model.Fax3DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Fax 3 Fax Number:</div>
-            <div class="col-sm-3">@(Model.Fax3FaxNumber)</div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Physical Addresses
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Address 1 Display Name:</div>
-            <div class="col-sm-10">@(Model.Address1DisplayName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 1 Street:</div>
-            <div class="col-sm-3">@(Model.Address1AddressStreet)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 1 Line 2:</div>
-            <div class="col-sm-3">@(Model.Address1AddressLine2)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 1 City:</div>
-            <div class="col-sm-3">@(Model.Address1AddressCity)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 1 State/Province:</div>
-            <div class="col-sm-3">@(Model.Address1AddressStateOrProvince)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 1 Postal Code:</div>
-            <div class="col-sm-3">@(Model.Address1AddressPostalCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 1 Country:</div>
-            <div class="col-sm-3">@(Model.Address1AddressCountry)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 1 Country Code:</div>
-            <div class="col-sm-3">@(Model.Address1AddressCountryCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 1 Post Office Box:</div>
-            <div class="col-sm-3">@(Model.Address1AddressPostOfficeBox)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 2 Display Name:</div>
-            <div class="col-sm-10">@(Model.Address2DisplayName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 2 Street:</div>
-            <div class="col-sm-3">@(Model.Address2AddressStreet)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 2 Line 2:</div>
-            <div class="col-sm-3">@(Model.Address2AddressLine2)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 2 City:</div>
-            <div class="col-sm-3">@(Model.Address2AddressCity)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 2 State/Province:</div>
-            <div class="col-sm-3">@(Model.Address2AddressStateOrProvince)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 2 Postal Code:</div>
-            <div class="col-sm-3">@(Model.Address2AddressPostalCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 2 Country:</div>
-            <div class="col-sm-3">@(Model.Address2AddressCountry)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 2 Country Code:</div>
-            <div class="col-sm-3">@(Model.Address2AddressCountryCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 2 Post Office Box:</div>
-            <div class="col-sm-3">@(Model.Address2AddressPostOfficeBox)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 3 Display Name:</div>
-            <div class="col-sm-10">@(Model.Address3DisplayName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 3 Street:</div>
-            <div class="col-sm-3">@(Model.Address3AddressStreet)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 3 Line 2:</div>
-            <div class="col-sm-3">@(Model.Address3AddressLine2)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 3 City:</div>
-            <div class="col-sm-3">@(Model.Address3AddressCity)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 3 State/Province:</div>
-            <div class="col-sm-3">@(Model.Address3AddressStateOrProvince)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 3 Postal Code:</div>
-            <div class="col-sm-3">@(Model.Address3AddressPostalCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 3 Country:</div>
-            <div class="col-sm-3">@(Model.Address3AddressCountry)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Address 3 Country Code:</div>
-            <div class="col-sm-3">@(Model.Address3AddressCountryCode)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Address 3 Post Office Box:</div>
-            <div class="col-sm-3">@(Model.Address3AddressPostOfficeBox)</div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Telephone Numbers
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Telephone 1 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone1DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 1 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone1TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 2 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone2DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 2 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone2TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 2 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone2DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 2 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone2TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 2 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone2DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 2 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone2TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 3 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone3DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 3 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone3TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 4 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone4DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 4 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone4TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 5 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone5DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 5 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone5TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 6 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone6DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 6 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone6TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 7 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone7DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 7 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone7TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 8 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone8DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 8 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone8TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 9 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone9DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 9 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone9TelephoneNumber)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Telephone 10 Display Name:</div>
-            <div class="col-sm-3">@(Model.Telephone10DisplayName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Telephone 10 Telephone Number:</div>
-            <div class="col-sm-3">@(Model.Telephone10TelephoneNumber)</div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Events
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Birthday:</div>
-            <div class="col-sm-3">@(string.Format("{0:MMM d, yyyy}", Model.Birthday))</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Wedding:</div>
-            <div class="col-sm-3">@(string.Format("{0:MMM d, yyyy}", Model.Wedding))</div>
+            <div class="col-sm-1">Gender:</div>
+            <div class="col-sm-2">@Model.Gender</div>
+            <div class="col-sm-1">Birthday:</div>
+            <div class="col-sm-2">@(string.Format("{0:MMM d, yyyy}", Model.Birthday))</div>
+            <div class="col-sm-1">Spouse:</div>
+            <div class="col-sm-2">@Model.SpouseName</div>
+            <div class="col-sm-1">Wedding:</div>
+            <div class="col-sm-2">@(string.Format("{0:MMM d, yyyy}", Model.Wedding))</div>
         </div>
     </div>
 </div>
@@ -384,67 +209,12 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-2">Title:</div>
-            <div class="col-sm-3">@(Model.Title)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Bar Number:</div>
-            <div class="col-sm-3">@(Model.BarNumber)</div>
-        </div>
-        <div class="row">
             <div class="col-sm-2">Company Name:</div>
             <div class="col-sm-3">@(Model.CompanyName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Department Name:</div>
-            <div class="col-sm-3">@(Model.DepartmentName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Office Location:</div>
-            <div class="col-sm-3">@(Model.OfficeLocation)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Manager Name:</div>
-            <div class="col-sm-3">@(Model.ManagerName)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Assistant Name:</div>
-            <div class="col-sm-3">@(Model.AssistantName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Profession:</div>
-            <div class="col-sm-3">@(Model.Profession)</div>
-        </div>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Other Details
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Spouse's Name:</div>
-            <div class="col-sm-3">@(Model.SpouseName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Language:</div>
-            <div class="col-sm-3">@(Model.Language)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Instant Messaging Address:</div>
-            <div class="col-sm-3">@(Model.InstantMessagingAddress)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Personal Home Page:</div>
-            <div class="col-sm-3">@(Model.PersonalHomePage)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Business Home Page:</div>
-            <div class="col-sm-3">@(Model.BusinessHomePage)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Gender:</div>
-            <div class="col-sm-3">@(Model.Gender)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Referred By:</div>
-            <div class="col-sm-3">@(Model.ReferredByName)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-3"></div>
+            <div class="col-sm-1">Title:</div>
+            <div class="col-sm-3">@(Model.Title)</div>
+            <div class="col-sm-1">Bar Number:</div>
+            <div class="col-sm-2">@(Model.BarNumber)</div>
         </div>
     </div>
 </div>

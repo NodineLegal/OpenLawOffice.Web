@@ -1,6 +1,6 @@
 @model OpenLawOffice.Web.ViewModels.Contacts.ContactViewModel
 
-@{ 
+@{
     Layout = "~/Views/Shared/_NewLayout.cshtml";
     ViewBag.Title = "Edit Contacts";
     ViewBag.PageTitle = "Edit Contacts";
@@ -27,12 +27,12 @@
         @if (Model.IsOurEmployee)
         {
             <text>
-                $("#BillingPane").show();
-            </text>
+        $("#BillingPane").show();
+        </text>
         } else {
             <text>
-                $("#BillingPane").hide();
-            </text>
+        $("#BillingPane").hide();
+        </text>
         }
     });
 
@@ -52,7 +52,7 @@
         $("#conflicts").click(function () {
             window.location = '/Contacts/Conflicts/@(Model.Id)';
         })
-       $("#matters").click(function () {
+        $("#matters").click(function () {
             window.location = '/Contacts/Matters/@(Model.Id)';
         })
         $("#tasks").click(function () {
@@ -78,10 +78,13 @@
 @using (Html.BeginForm("Edit", "Contacts", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
 {
     @(Html.ValidationSummary(true))
-
+    
     <div class="panel panel-default">
-        <div class="panel-heading">Classification</div>
+        <div class="panel-heading">
+            @Model.DisplayName
+        </div>
         <div class="panel-body">
+            <h4>Classification</h4>
             <div class="form-group">
                 <span class="control-label col-sm-2">Our Employee</span>
                 <div class="col-sm-10" style="padding-top: 7px;">
@@ -102,8 +105,8 @@
                             </td>
                             <td class="display-field">
                                 @(Html.DropDownListFor(model => model.BillingRate.Id,
-                        new SelectList(ViewBag.BillingRateList, "Id", "Title"),
-                        new { @size = 5, @style = "width: 100%" }))
+                new SelectList(ViewBag.BillingRateList, "Id", "Title"),
+                new { @size = 5, @style = "width: 100%" }))
                             </td>
                         </tr>
                     </table>
@@ -115,548 +118,213 @@
                     @(Html.CheckBoxFor(model => model.IsOrganization))Check to indicate that this contact is for an organization, not an individual.
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Contact Name</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Nickname</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Nickname, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Generation</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Generation, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Display Name Prefix</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.DisplayNamePrefix, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Display Name<span class="required-field" title="Required Field">*</span></span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Surname (Last)</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Surname, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Middle Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Given (First) Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.GivenName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Initials</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Initials, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Electronic Addresses</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 1 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email1DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 1 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email1EmailAddress, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 2 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email2DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 2 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email2EmailAddress, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 3 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email3DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Email 3 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Email3EmailAddress, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 1 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax1DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 1 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax1FaxNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 2 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax2DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 2 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax2FaxNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 3 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax3DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Fax 3 Email Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Fax3FaxNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Physical Addresses</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Street</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressStreet, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Line 2</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressLine2, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 City</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressCity, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 State/Province</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressStateOrProvince, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Postal Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressPostalCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Country</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressCountry, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Country Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressCountryCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 1 Post Office Box</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address1AddressPostOfficeBox, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Street</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressStreet, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Line 2</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressLine2, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 City</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressCity, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 State/Province</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressStateOrProvince, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Postal Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressPostalCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Country</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressCountry, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Country Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressCountryCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 2 Post Office Box</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address2AddressPostOfficeBox, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Street</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressStreet, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Line 2</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressLine2, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 City</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressCity, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 State/Province</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressStateOrProvince, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Postal Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressPostalCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Country</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressCountry, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Country Code</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressCountryCode, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Address 3 Post Office Box</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Address3AddressPostOfficeBox, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Telephone Numbers</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 1 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone1DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 1 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone1TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 2 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone2DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 2 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone2TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 3 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone3DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 3 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone3TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 4 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone4DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 4 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone4TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 5 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone5DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 5 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone5TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 6 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone6DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 6 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone6TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 7 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone7DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 7 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone7TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 8 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone8DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 8 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone8TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 9 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone9DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 9 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone9TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 10 Display Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone10DisplayName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Telephone 10 Telephone Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Telephone10TelephoneNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Events</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Birthday</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Birthday, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Wedding</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Wedding, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Professional Details</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Title</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Title, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Bar Number</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.BarNumber, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Company Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Department Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.DepartmentName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Office Location</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.OfficeLocation, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Manager Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.ManagerName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Assistant Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.AssistantName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Profession</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Profession, new { @class = "form-control" }))
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Other Details</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <span class="control-label col-sm-2">Spouse's Name</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.SpouseName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Language</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Language, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Instant Messaging Address</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.InstantMessagingAddress, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Personal Home Page</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.PersonalHomePage, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Business Home Page</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.BusinessHomePage, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Gender</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.Gender, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <span class="control-label col-sm-2">Referred By</span>
-                <div class="col-sm-10" style="padding-top: 7px;">
-                    @(Html.TextBoxFor(m => m.ReferredByName, new { @class = "form-control" }))
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Submit</button>
+
+            <h4>Name</h4>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">First</span>
+                        @(Html.TextBoxFor(m => m.GivenName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Middle</span>
+                        @(Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Last</span>
+                        @(Html.TextBoxFor(m => m.Surname, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Generation</span>
+                        @(Html.TextBoxFor(m => m.Generation, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Display Name<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Referred By</span>
+                        @(Html.TextBoxFor(m => m.ReferredByName, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+
+            <h4>Contact Information</h4>
+            <div class="row">
+                <div class="col-sm-3">
+                    @(Html.HiddenFor(m => m.Email1DisplayName, new { @value = "Email" }))
+                    <div class="input-group">
+                        <span class="input-group-addon">Email</span>
+                        <input type="email" class="form-control" id="Email1EmailAddress" name="Email1EmailAddress" value="@Model.Email1EmailAddress" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    @(Html.HiddenFor(m => m.Telephone1DisplayName, new { @value = "Primary" }))
+                    <div class="input-group">
+                        <span class="input-group-addon">Phone 1</span>
+                        <input type="tel" class="form-control" id="Telephone1TelephoneNumber" name="Telephone1TelephoneNumber" value="@Model.Telephone1TelephoneNumber" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    @(Html.HiddenFor(m => m.Telephone2DisplayName, new { @value = "Secondary" }))
+                    <div class="input-group">
+                        <span class="input-group-addon">Phone 2</span>
+                        <input type="tel" class="form-control" id="Telephone2TelephoneNumber" name="Telephone2TelephoneNumber" value="@Model.Telephone2TelephoneNumber" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    @(Html.HiddenFor(m => m.Fax1DisplayName, new { @value = "Fax" }))
+                    <div class="input-group">
+                        <span class="input-group-addon">Fax</span>
+                        <input type="tel" class="form-control" id="Fax1FaxNumber" name="Fax1FaxNumber" value="@Model.Fax1FaxNumber" />
+                    </div>
+                </div>
+            </div>
+
+            <h4>Mailing Address</h4>
+            @(Html.HiddenFor(m => m.Address1DisplayName, new { @value = "Mailing Address" }))
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Line 1</span>
+                        @(Html.TextBoxFor(m => m.Address1AddressStreet, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Line 2</span>
+                        @(Html.TextBoxFor(m => m.Address1AddressLine2, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">City</span>
+                        @(Html.TextBoxFor(m => m.Address1AddressCity, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">State</span>
+                        @(Html.TextBoxFor(m => m.Address1AddressStateOrProvince, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Zip</span>
+                        @(Html.TextBoxFor(m => m.Address1AddressPostalCode, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+
+            <h4>Physical Address</h4>
+            @(Html.HiddenFor(m => m.Address1DisplayName, new { @value = "Physical Address" }))
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Line 1</span>
+                        @(Html.TextBoxFor(m => m.Address2AddressStreet, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Line 2</span>
+                        @(Html.TextBoxFor(m => m.Address2AddressLine2, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">City</span>
+                        @(Html.TextBoxFor(m => m.Address2AddressCity, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">State</span>
+                        @(Html.TextBoxFor(m => m.Address2AddressStateOrProvince, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Zip</span>
+                        @(Html.TextBoxFor(m => m.Address2AddressPostalCode, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+
+
+            <h4>Personal Details</h4>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Gender</span>
+                        <select id="Gender" name="Gender" class="form-control">
+                            <option value="" @if (Model.Gender != "Male" && Model.Gender != "Female") { <text> selected</text>}></option>
+                            <option value="Male" @if (Model.Gender == "Male") { <text> selected</text>}>Male</option>
+                            <option value="Female" @if (Model.Gender == "Female") { <text> selected</text>}>Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Birthday</span>
+                        <input type="date" class="form-control" id="Birthday" name="Birthday" value="@if (Model.Birthday.HasValue) {<text>@Model.Birthday.Value.ToString("yyyy-MM-dd")</text>}" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Spouse's Name</span>
+                        @(Html.TextBoxFor(m => m.SpouseName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Wedding</span>
+                        <input type="date" class="form-control" id="Wedding" name="Wedding" value="@if (Model.Wedding.HasValue) {<text>@Model.Wedding.Value.ToString("yyyy-MM-dd")</text>}" />
+                    </div>
+                </div>
+            </div>
+
+            <h4>Professional Information</h4>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Company Name</span>
+                        @(Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Title</span>
+                        @(Html.TextBoxFor(m => m.Title, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">Bar Number</span>
+                        @(Html.TextBoxFor(m => m.BarNumber, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12 text-center">
+                    <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
                 </div>
             </div>
         </div>

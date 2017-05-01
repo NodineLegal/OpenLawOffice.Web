@@ -173,13 +173,13 @@ namespace OpenLawOffice.Web.Controllers
                     model = Data.Contacts.Contact.Create(trans, model, currentUser);
 
                     trans.Commit();
+                    return RedirectToAction("Details", new { Id = model.Id.Value });
                 }
                 catch
                 {
                     trans.Rollback();
                 }
             }
-
             return RedirectToAction("Index");
         }
 

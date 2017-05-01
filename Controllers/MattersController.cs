@@ -980,7 +980,7 @@ namespace OpenLawOffice.Web.Controllers
 
             using (IDbConnection conn = Data.Database.Instance.GetConnection())
             {
-                Data.Matters.Matter.ListMattersWithoutActiveTasks(5, conn, false).ForEach(x =>
+                Data.Matters.Matter.ListMattersWithoutActiveTasks(null, conn, false).ForEach(x =>
                 {
                     tasklessMatters.Add(Mapper.Map<ViewModels.Matters.MatterViewModel>(x));
                 });

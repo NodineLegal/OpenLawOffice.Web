@@ -46,9 +46,8 @@ namespace OpenLawOffice.Web.Controllers
             }
 
             viewModel = Mapper.Map<ViewModels.Billing.ExpenseViewModel>(model);
-            
-            ViewData["MatterId"] = matter.Id.Value;
-            ViewData["Matter"] = matter.Title;
+
+            ViewBag.Matter = matter;
             return View(viewModel);
         }
 
