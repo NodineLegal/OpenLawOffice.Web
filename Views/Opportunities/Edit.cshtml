@@ -1,0 +1,294 @@
+﻿@model OpenLawOffice.Web.ViewModels.Opportunities.OpportunityViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Edit Opportunity";
+    ViewBag.PageTitle = "Edit Opportunity";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Opportunities">Opportunities</a></li>
+        <li>Opportunity: <a href="/Opportunities/Details/@Model.Id">@(Model.Account.DisplayName)</a></li>
+        <li><a href="/Opportunities/Edit/@Model.Id" class="active">Edit</a></li>
+    </ul>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#edit").click(function () {
+            window.location = '/Opportunities/Edit/@(Model.Id)';
+        })
+        $("#close").click(function () {
+            window.location = '/Opportunities/Close/@(Model.Id)';
+        })
+    })
+    $(document).ready(function () {
+        contactSelector('Account');
+        contactSelector('Lead_Fee_To');
+        contactSelector('Lead_Contact');
+    });
+    function contactSelector(title) {
+        $('#' + title + '_DisplayName').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_DisplayName').val('');
+        });
+        $('#' + title + '_DisplayName').autocomplete({
+            source: '/Contacts/ListDisplayNameOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+            .append('<a>' + item.DisplayName + '</a>')
+            .appendTo(ul);
+        };
+    }
+</script>
+
+@using (Html.BeginForm("Edit", "Opportunities", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="h4 col-sm-6" style="margin: 0px;">
+                            Opportunity Information
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <div class="container-fluid">
+                                <div class="row text-right">
+                                    <div class="btn-group">
+                                        <button id="convert" class="btn btn-xs btn-default"><span class="fa fa-bullseye"></span> Convert to Matter</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Account (Contact):
+                            </div>
+                            <div class="col-sm-9">
+                                @(Html.HiddenFor(model => model.Account.Id))
+                                @(Html.TextBoxFor(m => m.Account.DisplayName, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Stage:
+                            </div>
+                            <div class="col-sm-9">
+                                @(Html.DropDownListFor(x => x.Stage.Id,
+        new SelectList(ViewBag.StageList, "Id", "Title"),
+        new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="row" style="height: 10px;"></div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Probability:
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <input type="number" value="50" step="1" min="0" max="100" name="@Html.NameFor(x => x.Probability)" id="@Html.IdFor(x => x.Probability)" class="form-control" value="@Model.Probability" />
+                                    <div class="input-group-addon">%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Value:
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="number" step="0.01" min="0" max="" name="@Html.NameFor(x => x.Amount)" id="@Html.IdFor(x => x.Amount)" class="form-control" value="@Model.Amount" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Closed:
+                            </div>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="@Html.IdFor(m => m.Closed)" name="@Html.NameFor(m => m.Closed)" @if (Model.Closed != null && Model.Closed.HasValue) { <text> value="@Model.Closed.Value.ToString("yyyy-MM-dd")" </text>   } />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="h4 col-sm-6" style="margin: 0px;">
+                            Lead Information
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <div class="container-fluid">
+                                <div class="row text-right">
+                                    <div class="btn-group">
+                                        <button id="convert" class="btn btn-xs btn-default"><span class="fa fa-bullseye"></span> Convert to Opportunity</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    @Html.HiddenFor(x => x.Lead.Id)
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Lead Contact:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.HiddenFor(model => model.Lead.Contact.Id))
+                            @(Html.TextBoxFor(m => m.Lead.Contact.DisplayName, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Status:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.DropDownListFor(x => x.Lead.Status.Id,
+                    new SelectList(ViewBag.LeadStatusList, "Id", "Title"),
+                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Source:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.DropDownListFor(x => x.Lead.Source.Id,
+                    new SelectList(ViewBag.LeadSourceList, "Id", "Title"),
+                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row" style="height: 10px;"></div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Eligible:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.HiddenFor(x => x.Lead.Fee.Id))
+                            @(Html.CheckBoxFor(m => m.Lead.Fee.IsEligible, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee To:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.HiddenFor(model => model.Lead.Fee.To.Id))
+                            @(Html.TextBoxFor(m => m.Lead.Fee.To.DisplayName, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Amount:
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div>
+                                <input type="number" step="0.01" min="0" max="" name="@Html.NameFor(x => x.Lead.Fee.Amount)" id="@Html.IdFor(x => x.Lead.Fee.Amount)" value="@Model.Lead.Fee.Amount" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Paid:
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="@Html.IdFor(m => m.Lead.Fee.Paid)" name="@Html.NameFor(m => m.Lead.Fee.Paid)" @if (Model.Lead.Fee != null && Model.Lead.Fee.Paid.HasValue) { <text> value="@Model.Lead.Fee.Paid.Value.ToString("yyyy-MM-dd")" </text>   } />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Details:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.TextBoxFor(m => m.Lead.Fee.AdditionalData, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row" style="height: 10px;"></div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Lead Details:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.TextBoxFor(m => m.Lead.Details, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-12" style="margin: 0px;">
+                        Involved Contacts
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        Use this area to select contacts that are in some way involved with this opportunity.
+                    </div>
+                </div>
+                @for (int i = 0; i < Model.Contacts.Count; i++)
+                {
+                    OpenLawOffice.Web.ViewModels.Contacts.ContactViewModel contact = Model.Contacts[i];
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">Contact</span>
+                                @(Html.TextBoxFor(m => m.Contacts[i].DisplayName, new { @class = "form-control" }))
+                            </div>
+                            @(Html.HiddenFor(model => model.Contacts[i].Id))
+                            <script language="javascript">contactSelector('@Html.IdFor(model => model.Contacts[i])');</script>
+                        </div>
+                        @if (i + 1 < Model.Contacts.Count)
+                        {
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">Contact</span>
+                                    @(Html.TextBoxFor(m => m.Contacts[i+1].DisplayName, new { @class = "form-control" }))
+                                </div>
+                                @(Html.HiddenFor(model => model.Contacts[i+1].Id))
+                                <script language="javascript">contactSelector('@Html.IdFor(model => model.Contacts[i+1])');</script>
+                            </div>
+                            i++;
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
+        </div>
+    </div>
+}

@@ -24,206 +24,354 @@
 
 @using (Html.BeginForm("Close", "Matters", new { Id = Model.Id }, FormMethod.Post, new { id = "CloseForm" }))
 {
-    <div class="container-fluid">
-        <div class="row text-right">
-            <div class="btn-group">
-                <button type="button" id="new" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Create')"><span class="fa fa-plus"></span> New Contact</button>
-                <button type="button" id="details" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Details/@(Model.Id)')"><span class="fa fa-info"></span> Detail</button>
-                <button type="button" id="edit" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Edit/@(Model.Id)')"><span class="fa fa-pencil"></span> Edit</button>
-                <button type="button" id="list" class="btn btn-sm btn-primary" onclick="navTo('/Matters')"><span class="fa fa-list"></span> List</button>
-                @if (Model.Active)
-                {
-                    <button id="closeMatter" class="btn btn-sm btn-primary" type="submit"><span class="fa fa-times"></span> Close Matter</button>
-                }
-            </div>
-            <div class="btn-group">
-                <button type="button" id="contacts" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Contacts/@(Model.Id)')"><span class="fa fa-user"></span> Contacts</button>
-                <button type="button" id="tasks" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Tasks/@(Model.Id)')"><span class="fa fa-tasks"></span> Tasks</button>
-                <button type="button" id="notes" class="btn btn-sm btn-primary" onclick="navTo('/Matters/Notes/@(Model.Id)')"><span class="fa fa-sticky-note-o"></span> Notes</button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Reports <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a href="/Matters/Timesheet/@(Model.Id)">Timesheet</a></li>
-                    <li><a href="/Matters/Time/@(Model.Id)">Times by Task</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-}
 
-@if (ViewBag.AlertText != null)
+if (ViewBag.AlertText != null)
 {
     <div class="alert alert-danger" role="alert">
         @(Html.Raw(ViewBag.AlertText))
     </div>
 }
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Matter Details
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Default Billing Rate:</div>
-            <div class="col-sm-3">
-                @if (Model.DefaultBillingRate != null)
-                {
-                    @(Model.DefaultBillingRate.Title) <text>(@(Model.DefaultBillingRate.PricePerUnit.ToString("C")))</text>
-                }
-                Employee Rate Override:
-                @if (Model.OverrideMatterRateWithEmployeeRate)
-                {
-                    <text>On</text>
-                }
-                else
-                {
-                    <text>Off</text>
-                }
-            </div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Bill To:</div>
-            <div class="col-sm-3">
-                @if (Model.BillTo != null)
-                {
-                    @(Html.ActionLink(Model.BillTo.DisplayName, "Details", "Contacts", new { Id = Model.BillTo.Id }, null))
-                }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Matter Type:</div>
-            <div class="col-sm-3">
-                @if (Model.MatterType != null)
-                {
-                    @(Model.MatterType.Title)
-                }
-            </div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Billing Group:</div>
-            <div class="col-sm-3">
-                @if (Model.BillingGroup != null)
-                {
-                    @(Html.ActionLink(Model.BillingGroup.Title, "Details", "BillingGroups", new { Id = Model.BillingGroup.Id }, null))
-                    <text>(Next Bill: @(Model.BillingGroup.NextRun.ToShortDateString()))</text>
-                }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Case Number:</div>
-            <div class="col-sm-3">@(Model.CaseNumber)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Client(s):</div>
-            <div class="col-sm-3">
-                @foreach (var item in Model.Clients)
-            {
-                if (item != null && item.Id.HasValue)
-                {
-                        @(Html.ActionLink(item.DisplayName, "Details", "Contacts", new { Id = item.Id }, new { id = "link_" + item.Id.Value }))
-                        <div id="Contact_@(item.Id.Value)" title="Contact Details">
-                            <div>Phone: @(item.Telephone1TelephoneNumber)</div>
-                            <div>Email: @(item.Email1EmailAddress)</div>
-                            <div>
-                                <div style="display:inline-block; vertical-align: top;">Address:</div>
-                                <div style="display:inline-block; padding: 0px; margin-left: 5px;">
-                                    <div>@(item.Address1AddressStreet)</div>
-                                    <div>
-                                        @if (item.Address1AddressPostOfficeBox != null)
-                                        {
-                                            <text>>PO Box @(item.Address1AddressPostOfficeBox)</text>
-                                        }
-                                        @(item.Address1AddressCity), @(item.Address1AddressStateOrProvince) @(item.Address1AddressPostalCode)
-                                    </div>
-                                </div>
-                            </div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-4">
+                        Matter Details
+                    </div>
+                    <div class="col-sm-8 text-right">
+                        <div class="btn-group">
+                            <a href="/Matters/Edit/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
+                            @if (Model.Active)
+                            {
+                                <button id="closeMatter" class="btn btn-xs btn-default" type="submit"><span class="fa fa-times"></span> Close Matter</button>
+                            }
                         </div>
-                        <script language="javascript">
-                            $(function () {
-                                $("#Contact_@(item.Id.Value)").dialog({
-                                    autoOpen: false,
-                                    width: 400,
-                                    show: {
-                                        effect: "clip",
-                                        duration: 100
-                                    },
-                                    hide: {
-                                        effect: "fade",
-                                        duration: 100
-                                    }
-                                });
+                        <div class="btn-group">
+                            <a href="/Matters/Contacts/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-user"></i> Contacts</a>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Reports <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="/Matters/Timesheet/@(Model.Id)">Timesheet</a></li>
+                                <li><a href="/Matters/Time/@(Model.Id)">Times by Task</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-condensed table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Matter Type</td>
+                                    <td>
+                                        @if (Model.MatterType != null)
+                                        {
+                                            @(Model.MatterType.Title)
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Case Number</td>
+                                    <td>@(Model.CaseNumber)</td>
+                                </tr>
+                                <tr>
+                                    <td>Court Type</td>
+                                    <td>
+                                        @if (Model.CourtType != null)
+                                        { @(Model.CourtType.Title) }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Court Geo. Jurisdiction</td>
+                                    <td>
+                                        @if (Model.CourtGeographicalJurisdiction != null)
+                                        { @(Model.CourtGeographicalJurisdiction.Title) }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Court Sitting in City</td>
+                                    <td>
+                                        @if (Model.CourtSittingInCity != null)
+                                        { @(Model.CourtSittingInCity.Title) }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-6">
+                        <table class="table table-condensed table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Default Billing Rate</td>
+                                    <td>
+                                        @if (Model.DefaultBillingRate != null)
+                                        {
+                                            @(Model.DefaultBillingRate.Title) <text>(@(Model.DefaultBillingRate.PricePerUnit.ToString("C")))</text>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Use Employee Rates</td>
+                                    <td>@OpenLawOffice.Web.Helpers.BooleanHelper.YesNo(Model.OverrideMatterRateWithEmployeeRate)</td>
+                                </tr>
+                                <tr>
+                                    <td>Bill To</td>
+                                    <td>
+                                        @if (Model.BillTo != null)
+                                        {
+                                            @(Html.ActionLink(Model.BillTo.DisplayName, "Details", "Contacts", new { Id = Model.BillTo.Id }, null))
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Billing Group</td>
+                                    <td>
+                                        @if (Model.BillingGroup != null)
+                                        {
+                                            @(Html.ActionLink(Model.BillingGroup.Title, "Details", "BillingGroups", new { Id = Model.BillingGroup.Id }, null))
+                                            <text>(Next Bill: @(Model.BillingGroup.NextRun.ToShortDateString()))</text>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Client(s)</td>
+                                    <td>
+                                        @foreach (var item in Model.Clients)
+                                        {
+                                            if (item != null && item.Id.HasValue)
+                                            {
+                                                @(Html.ActionLink(item.DisplayName, "Details", "Contacts", new { Id = item.Id }, new { id = "link_" + item.Id.Value }))
+                                                <div id="Contact_@(item.Id.Value)" title="Contact Details">
+                                                    <div>Phone: @(item.Telephone1TelephoneNumber)</div>
+                                                    <div>Email: @(item.Email1EmailAddress)</div>
+                                                    <div>
+                                                        <div style="display:inline-block; vertical-align: top;">Address:</div>
+                                                        <div style="display:inline-block; padding: 0px; margin-left: 5px;">
+                                                            <div>@(item.Address1AddressStreet)</div>
+                                                            <div>
+                                                                @if (item.Address1AddressPostOfficeBox != null)
+                                                                {
+                                                                    <text>>PO Box @(item.Address1AddressPostOfficeBox)</text>
+                                                                }
+                                                                @(item.Address1AddressCity), @(item.Address1AddressStateOrProvince) @(item.Address1AddressPostalCode)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script language="javascript">
+                                                    $(function () {
+                                                        $("#Contact_@(item.Id.Value)").dialog({
+                                                            autoOpen: false,
+                                                            width: 400,
+                                                            show: {
+                                                                effect: "clip",
+                                                                duration: 100
+                                                            },
+                                                            hide: {
+                                                                effect: "fade",
+                                                                duration: 100
+                                                            }
+                                                        });
 
-                                $("#link_@(item.Id.Value)").hoverIntent(function () {
-                                    $("#Contact_@(item.Id.Value)").dialog("open");
-                                }, function () {
-                                    $("#Contact_@(item.Id.Value)").dialog("close");
-                                });
-                            });
-                        </script>
-                    }
-                }
+                                                        $("#link_@(item.Id.Value)").hoverIntent(function () {
+                                                            $("#Contact_@(item.Id.Value)").dialog("open");
+                                                        }, function () {
+                                                            $("#Contact_@(item.Id.Value)").dialog("close");
+                                                        });
+                                                    });
+                                                </script>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-2 text-right">Synopsis:</div>
+                    <div class="col-sm-10">@(Model.Synopsis)</div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-2">Synopsis:</div>
-            <div class="col-sm-10">@(Model.Synopsis)</div>
+    </div>
+    <div class="col-sm-6">        
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-4">
+                        Quick Reference
+                    </div>
+                    <div class="col-sm-8 text-right">
+                        @if (Model.BillingGroup == null)
+                        {
+                            <a href="/Billing/SingleMatterBill/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Invoice</a>
+                            <a href="/Matters/Invoices/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Invoices</a>
+                        }
+                        else
+                        {
+                            <a href="/Billing/SingleGroupBill/@(Model.BillingGroup.Id)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Invoice</a>
+                            <a href="/BillingGroups/Invoices/@(Model.BillingGroup.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Invoices</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-condensed table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Lead</td>
+                                    <td>
+                                        @if (Model.Opportunity != null && Model.Opportunity.Lead != null)
+                                        {
+                                            @Html.ActionLink(Model.Opportunity.Lead.Contact.DisplayName, "Details", "Leads", new { id = Model.Opportunity.Lead.Id.Value, preventRedirect = true }, null)
+                                        }
+                                        else
+                                        {
+                                            <text>None</text>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Opportunity</td>
+                                    <td>
+                                        @if (Model.Opportunity != null)
+                                        {
+                                            @Html.ActionLink(Model.Opportunity.Account.DisplayName, "Details", "Opportunities", new { id = Model.Opportunity.Id.Value, preventRedirect = true }, null)
+                                        }
+                                        else
+                                        {
+                                            <text>None</text>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Source</td>
+                                    <td>
+                                        @if (Model.Opportunity != null && Model.Opportunity.Lead != null && Model.Opportunity.Lead.Source != null)
+                                        {
+                                            if (Model.Opportunity.Lead.Source.Contact != null)
+                                            {
+                                                <text>@Html.ActionLink(Model.Opportunity.Lead.Source.Title, "Details", "Contacts", new { id = Model.Opportunity.Lead.Source.Contact.Id.Value }, null)</text>
+                                            }
+                                            else
+                                            {
+                                                @Model.Opportunity.Lead.Source.Title
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <text>None</text>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <table class="table table-condensed table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Matter Value</td>
+                                    <td>
+                                        @(ViewBag.TotalValue)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ref. Fee</td>
+                                    <td>
+                                        @if (Model.Opportunity != null && Model.Opportunity.Lead != null && Model.Opportunity.Lead.Fee != null && Model.Opportunity.Lead.Fee.IsEligible)
+                                        {
+                                            if (!Model.Opportunity.Lead.Fee.Amount.HasValue || Model.Opportunity.Lead.Fee.Amount.Value < 1)
+                                            {
+                                                <span class="text-danger">Invalid Fee</span>
+                                            }
+                                            else
+                                            {
+                                                if (Model.Opportunity.Lead.Fee.Paid.HasValue)
+                                                {
+                                                    <span>@Model.Opportunity.Lead.Fee.Amount.Value.ToString("C") to 
+                                                        @Html.ActionLink(Model.Opportunity.Lead.Fee.To.DisplayName, "Details", "Contacts", new { id = Model.Opportunity.Lead.Fee.To.Id.Value }, null)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-warning">@Model.Opportunity.Lead.Fee.Amount.Value.ToString("C") to 
+                                                        @Html.ActionLink(Model.Opportunity.Lead.Fee.To.DisplayName, "Details", "Contacts", new { id = Model.Opportunity.Lead.Fee.To.Id.Value }, null)</span>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <text>None</text>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <td style="font-weight: bold;">Financial Info</td>
+                            <td style="text-align:center;">Billed</td>
+                            <td style="text-align:center;">Billable</td>
+                            <td style="text-align:center;">Total</td>
+                            <td style="width: 60px;"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Expenses</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.ExpensesBilled))</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.ExpensesUnbilled))</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.Expenses))</td>
+                            <td><a href="/Matters/Expenses/@Model.Id" class="btn btn-xs btn-default"><i class="fa fa-list"></i></a> <a href="/Expenses/Create?MatterId=@Model.Id" class="btn btn-xs btn-default"><i class="fa fa-plus"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>Fees</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.FeesBilled))</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.FeesUnbilled))</td>
+                            <td style="text-align:center;">@(string.Format("{0:C}", ViewBag.Fees))</td>
+                            <td><a href="/Matters/Fees/@Model.Id" class="btn btn-xs btn-default"><i class="fa fa-list"></i></a> <a href="/Fees/Create?MatterId=@Model.Id" class="btn btn-xs btn-default"><i class="fa fa-plus"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>Time</td>
+                            <td style="text-align:center;">@(ViewBag.TimeBilled)</td>
+                            <td style="text-align:center;">@(ViewBag.TimeUnbilled)</td>
+                            <td style="text-align:center;">@(ViewBag.TotalValue)</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
         </div>
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Court Information
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-2">Attorney for Party Title:</div>
-            <div class="col-sm-3">@(Model.AttorneyForPartyTitle)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Court Type:</div>
-            <div class="col-sm-3">
-                @if (Model.CourtType != null)
-                { @(Model.CourtType.Title) }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Court Geo. Jurisdiction:</div>
-            <div class="col-sm-3">
-                @if (Model.CourtGeographicalJurisdiction != null)
-                { @(Model.CourtGeographicalJurisdiction.Title) }
-            </div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Court Sitting in City:</div>
-            <div class="col-sm-3">
-                @if (Model.CourtSittingInCity != null)
-                { @(Model.CourtSittingInCity.Title) }
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Plaintiff or Subject (Short):</div>
-            <div class="col-sm-3">@(Model.CaptionPlaintiffOrSubjectShort)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Other Party (Short):</div>
-            <div class="col-sm-3">@(Model.CaptionOtherPartyShort)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Plaintiff or Subject (Regular):</div>
-            <div class="col-sm-3">@(Model.CaptionPlaintiffOrSubjectRegular)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Other Party (Regular):</div>
-            <div class="col-sm-3">@(Model.CaptionOtherPartyRegular)</div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">Plaintiff or Subject (Long):</div>
-            <div class="col-sm-3">@(Model.CaptionPlaintiffOrSubjectLong)</div>
-            <div class="col-sm-2"></div>
-            <div class="col-sm-2">Other Party (Long):</div>
-            <div class="col-sm-3">@(Model.CaptionOtherPartyLong)</div>
-        </div>
-    </div>
-</div>
 
-<div class="panel panel-default">
+
+}
+@*<div class="panel panel-default">
     <div class="panel-heading">
         Financial Information
         <div style="float: right;">
@@ -331,7 +479,7 @@
             <div class="col-sm-3">@(ViewBag.TotalValue)</div>
         </div>
     </div>
-</div>
+</div>*@
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -349,8 +497,8 @@
                 </ul>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Tasks/Create?MatterId=@(Model.Id)')"><span class="fa fa-plus"></span> New Task</button>
-                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Matters/Tasks/@(Model.Id)')"><span class="fa fa-list"></span> List Tasks</button>
+                <a href="/Tasks/Create?MatterId=@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Task</a>
+                <a href="/Matters/Tasks/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Tasks</a>
             </div>
         </div>
     </div>
@@ -379,12 +527,8 @@
                             @(item.DueDate)
                         </td>
                         <td style="text-align: right;">
-                            <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Tasks/Edit/@(item.Id.Value)')">
-                                <span class="fa fa-pencil"></span> Edit
-                            </button>
-                            <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Tasks/Close/@(item.Id.Value)')">
-                                <span class="fa fa-times"></span> Close
-                            </button>
+                            <a href="/Tasks/Edit/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
+                            <a href="/Tasks/Close/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-times"></i> Close</a>
                         </td>
                     </tr>
                 }
@@ -399,8 +543,8 @@
         Matter Notes
         <div style="float: right;">
             <div class="btn-group">
-                <button type="button" id="newMatterNote" class="btn btn-xs btn-default" onclick="navTo('/Notes/Create?MatterId=@(Model.Id)')"><span class="fa fa-plus"></span> New Note</button>
-                <button type="button" id="listNotes" class="btn btn-xs btn-default" onclick="navTo('/Matters/Notes/@(Model.Id)')"><span class="fa fa-list"></span> List Notes</button>
+                <a href="/Notes/Create?MatterId=@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Note</a>
+                <a href="/Matters/Notes/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Notes</a>
             </div>
         </div>
     </div>
@@ -430,9 +574,7 @@
                             @(Html.ActionLink(item.Title, "Details", "Notes", new { id = item.Id.Value }, null))
                         </td>
                         <td style="text-align: right;">
-                            <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Notes/Edit/@(item.Id.Value)')">
-                                <span class="fa fa-pencil"></span> Edit
-                            </button>
+                            <a href="/Notes/Edit/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
                         </td>
                     </tr>
                 }
@@ -446,8 +588,8 @@
         Task Notes
         <div style="float: right;">
             <div class="btn-group">
-                <button type="button" id="newMatterNote" class="btn btn-xs btn-default" onclick="navTo('/Notes/Create?MatterId=@(Model.Id)')"><span class="fa fa-plus"></span> New Note</button>
-                <button type="button" id="listNotes2" class="btn btn-xs btn-default" onclick="navTo('/Matters/Notes/@(Model.Id)')"><span class="fa fa-list"></span> List Notes</button>
+                <a href="/Notes/Create?MatterId=@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Note</a>
+                <a href="/Matters/Notes/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Notes</a>
             </div>
         </div>
     </div>
@@ -483,9 +625,7 @@
                             @(Html.ActionLink(item.Note.Title, "Details", "Notes", new { id = item.Note.Id.Value }, null))
                         </td>
                         <td style="text-align: right;">
-                            <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Notes/Edit/@(item.Id.Value)')">
-                                <span class="fa fa-pencil"></span> Edit
-                            </button>
+                            <a href="/Notes/Edit/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
                         </td>
                     </tr>
                 }
@@ -494,13 +634,66 @@
     </div>
 </div>
 
+@if (Model.Opportunity != null)
+{
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Activities
+        <div style="float: right;">
+            <div class="btn-group">
+                <a href="/Opportunities/Details/@(Model.Opportunity.Id.Value)?preventRedirect=True" class="btn btn-xs btn-default"><i class="fa fa-bullseye"></i> View Opportunity</a>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1" data-field="functions" data-sortable="false">
+
+                            </th>
+                            <th class="col-sm-1" data-field="date" data-sortable="true">
+                                Date
+                            </th>
+                            <th class="col-sm-1" data-field="type" data-sortable="true">
+                                Type
+                            </th>
+                            <th data-field="details" data-sortable="false">
+                                Subject: <small class="text-muted">Body</small>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (OpenLawOffice.Web.ViewModels.Activities.ActivityBaseViewModel activity in Model.Activities)
+                        {
+                            <tr>
+                                <td>
+                                    [<a href="/Activities/Edit/@activity.Id">edit</a>]
+                                    [<a href="/Activities/Details/@activity.Id">view</a>]
+                                </td>
+                                <td>@activity.Created.Value.ToShortDateString()</td>
+                                <td>@activity.Type.Title</td>
+                                <td>@activity.Subject: <small class="text-muted">@activity.Body</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
 <div class="panel panel-default">
     <div class="panel-heading">
         Assets
         <div style="float: right;">
             <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Assets/Create/@(Model.Id.Value)')"><span class="fa fa-plus"></span> New Asset</button>
-                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Matters/Assets/@(Model.Id)')"><span class="fa fa-list"></span> List Assets</button>
+                <a href="/Assets/Create/@(Model.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> New Asset</a>
+                <a href="/Matters/Assets/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-list"></i> List Assets</a>
             </div>
         </div>
     </div>
@@ -544,7 +737,7 @@
                         <td style="text-align: right;">
                             @if (item.IsCourtFiled)
                             {
-                               <span class="fa fa-legal" title="Court Filed"></span>
+                                <span class="fa fa-legal" title="Court Filed"></span>
                             }
                             @if (item.IsAttorneyWorkProduct)
                             {
@@ -568,21 +761,14 @@
                             }
                         </td>
                         <td style="text-align: right;">
-
-                            <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Assets/Edit/@(item.Id.Value)')">
-                                <span class="fa fa-pencil"></span> Edit
-                            </button>
+                            <a href="/Assets/Edit/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
                             @if (!item.CheckedOutAt.HasValue)
                             {
-                                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Assets/Checkout/@(item.Id.Value)')">
-                                    <span class="fa fa-lock"></span> Checkout
-                                </button>
+                                <a href="/Assets/Checkout/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-lock"></i> Checkout</a>
                             }
                             else if (item.CheckedOutBy.Username == User.Identity.Name)
                             {
-                                <button type="button" class="btn btn-xs btn-default" onclick="navTo('/Assets/Checkin/@(item.Id.Value)')">
-                                    <span class="fa fa-unlock"></span> Checkin
-                                </button>
+                                <a href="/Assets/Checkin/@(item.Id.Value)" class="btn btn-xs btn-default"><i class="fa fa-unlock"></i> Checkin</a>
                             }
                         </td>
                     </tr>
@@ -591,4 +777,5 @@
         </table>
     </div>
 </div>
+
 @{ Html.RenderPartial("_CoreDetails");}

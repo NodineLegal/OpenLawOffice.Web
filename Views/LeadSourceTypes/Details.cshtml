@@ -1,0 +1,27 @@
+﻿@model OpenLawOffice.Web.ViewModels.Leads.LeadSourceTypeViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Lead Source Details";
+    ViewBag.PageTitle = "Lead Source Details";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Settings">Settings</a></li>
+        <li><a href="/LeadSourceTypes">Lead Source</a></li>
+        <li>Lead Source: <a href="/LeadSourceTypes/Details/@(Model.Id)" class="active">@(Model.Title)</a></li>
+    </ul>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">Lead Source Information</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <span class="control-label col-sm-2">Title<span class="required-field" title="Required Field">*</span></span>
+            <div class="col-sm-10" style="padding-top: 7px;">
+                @(Model.Title)
+            </div>
+        </div>
+    </div>
+</div>

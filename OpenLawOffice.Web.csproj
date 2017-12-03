@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props" Condition="Exists('packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.4\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.4\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,16 +45,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>packages\AngleSharp.0.9.9\lib\net45\AngleSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="AutoMapper, Version=4.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>packages\AutoMapper.4.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging, Version=3.1.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>packages\Common.Logging.3.1.0\lib\net40\Common.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>packages\Common.Logging.Core.3.1.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CsQuery, Version=1.3.3.249, Culture=neutral, processorArchitecture=MSIL">
@@ -65,26 +72,33 @@
       <HintPath>packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="HtmlSanitizer, Version=2.0.5735.24296, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\HtmlSanitizer.2.0.5735.24296\lib\net40\HtmlSanitizer.dll</HintPath>
+    <Reference Include="HtmlSanitizer, Version=3.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
+      <HintPath>packages\HtmlSanitizer.3.4.156\lib\net45\HtmlSanitizer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.4\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Npgsql, Version=3.0.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="pgProvider, Version=1.7.5617.37719, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\pgProvider.1.8\lib\pgProvider.dll</HintPath>
+    <Reference Include="Npgsql, Version=3.2.4.1, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>packages\Npgsql.3.2.4.1\lib\net451\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="pgProvider, Version=1.7.5879.39020, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\pgProvider.1.9\lib\pgProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -135,18 +149,9 @@
       <Private>True</Private>
       <HintPath>packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="WebGrease">
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
       <Private>True</Private>
-      <HintPath>packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
-    </Reference>
-    <Reference Include="Antlr3.Runtime">
-      <Private>True</Private>
-      <HintPath>packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +162,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountJsonController.cs" />
+    <Compile Include="Controllers\ActivitiesController.cs" />
+    <Compile Include="Controllers\ActivityTasksController.cs" />
+    <Compile Include="Controllers\ActivityLettersController.cs" />
+    <Compile Include="Controllers\ActivityEmailsController.cs" />
+    <Compile Include="Controllers\ActivityPhonecallsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AssetsController.cs" />
     <Compile Include="Controllers\AssetsJsonController.cs" />
@@ -178,12 +188,18 @@
     <Compile Include="Controllers\InstallationController.cs" />
     <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\JsonInterfaceController.cs" />
+    <Compile Include="Controllers\LeadsController.cs" />
+    <Compile Include="Controllers\LeadSourcesController.cs" />
+    <Compile Include="Controllers\OpportunityStagesController.cs" />
+    <Compile Include="Controllers\LeadSourceTypesController.cs" />
+    <Compile Include="Controllers\LeadStatusesController.cs" />
     <Compile Include="Controllers\MatterContactController.cs" />
     <Compile Include="Controllers\MattersController.cs" />
     <Compile Include="Controllers\MattersJsonController.cs" />
     <Compile Include="Controllers\MatterTagsController.cs" />
     <Compile Include="Controllers\MatterTypesController.cs" />
     <Compile Include="Controllers\NotesController.cs" />
+    <Compile Include="Controllers\OpportunitiesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TagCategoriesController.cs" />
@@ -218,6 +234,20 @@
     <Compile Include="ViewModels\Account\SelectableUserRoleViewModel.cs" />
     <Compile Include="ViewModels\Account\UserRoleViewModel.cs" />
     <Compile Include="ViewModels\Account\UsersViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityBaseViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityCorrespondenceBaseViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityDirectionViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityEmailViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityLetterViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityPhonecallViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityPriorityViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityRegardingBaseViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityRegardingLeadViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityRegardingOpportunityViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityRegardingTypeViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityStatusReasonViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityTaskViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivityTypeViewModel.cs" />
     <Compile Include="ViewModels\Assets\AssetMatterViewModel.cs" />
     <Compile Include="ViewModels\Assets\AssetsOfMatterViewModel.cs" />
     <Compile Include="ViewModels\Assets\AssetTagViewModel.cs" />
@@ -244,6 +274,7 @@
     <Compile Include="ViewModels\Billing\InvoiceTimeGroupViewModel.cs" />
     <Compile Include="ViewModels\Billing\InvoiceTimeViewModel.cs" />
     <Compile Include="ViewModels\Billing\InvoiceViewModel.cs" />
+    <Compile Include="ViewModels\ChartJSViewModel.cs" />
     <Compile Include="ViewModels\Contacts\ConflictViewModel.cs" />
     <Compile Include="ViewModels\Contacts\ContactViewModel.cs" />
     <Compile Include="ViewModels\Contacts\SelectableContactViewModel.cs" />
@@ -265,6 +296,16 @@
     <Compile Include="ViewModels\Home\DashboardViewModel.cs" />
     <Compile Include="ViewModels\Installation\InstallationViewModel.cs" />
     <Compile Include="ViewModels\JqGridObject.cs" />
+    <Compile Include="ViewModels\Leads\CreateLeadViewModel.cs" />
+    <Compile Include="ViewModels\Leads\DashboardGraphDataViewModel.cs" />
+    <Compile Include="ViewModels\Leads\DashboardViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadBySourceViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadConvertViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadFeeViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadSourceTypeViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadStatusViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadViewModel.cs" />
+    <Compile Include="ViewModels\Leads\LeadSourceViewModel.cs" />
     <Compile Include="ViewModels\Matters\CourtGeographicalJurisdictionViewModel.cs" />
     <Compile Include="ViewModels\Matters\CourtSittingInCityViewModel.cs" />
     <Compile Include="ViewModels\Matters\CourtTypeViewModel.cs" />
@@ -280,6 +321,12 @@
     <Compile Include="ViewModels\Notes\NoteNotificationViewModel.cs" />
     <Compile Include="ViewModels\Notes\NoteTaskViewModel.cs" />
     <Compile Include="ViewModels\Notes\NoteViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\CreateOpportunityViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\DashboardViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\OpportunityBySourceViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\OpportunityContactViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\OpportunityStageViewModel.cs" />
+    <Compile Include="ViewModels\Opportunities\OpportunityViewModel.cs" />
     <Compile Include="ViewModels\PermissionsViewModel.cs" />
     <Compile Include="ViewModels\PropertiesMustMatchAttribute.cs" />
     <Compile Include="ViewModels\Search\TagSearchViewModel.cs" />
@@ -310,6 +357,15 @@
     <Content Include="Content\bootstrap-fileinput\css\fileinput.min.css" />
     <Content Include="Content\bootstrap-fileinput\img\loading-sm.gif" />
     <Content Include="Content\bootstrap-fileinput\img\loading.gif" />
+    <Content Include="Content\bootstrap-fileinput\themes\explorer\theme.css" />
+    <Content Include="Content\bootstrap-fileinput\themes\explorer\theme.js" />
+    <Content Include="Content\bootstrap-fileinput\themes\explorer\theme.min.css" />
+    <Content Include="Content\bootstrap-fileinput\themes\explorer\theme.min.js" />
+    <Content Include="Content\bootstrap-fileinput\themes\fa\theme.js" />
+    <Content Include="Content\bootstrap-fileinput\themes\fa\theme.min.js" />
+    <Content Include="Content\bootstrap-fileinput\themes\gly\theme.js" />
+    <Content Include="Content\bootstrap-fileinput\themes\gly\theme.min.js" />
+    <Content Include="Content\bootstrap-tagsinput-typeahead.css" />
     <Content Include="Content\bootstrap-tagsinput.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -356,39 +412,24 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap3-typeahead.js" />
     <Content Include="Scripts\bootstrap3-typeahead.min.js" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\bootstrap-fileinput\sass\fileinput.scss" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\fileinput.js" />
     <Content Include="Scripts\fileinput.min.js" />
-    <Content Include="Scripts\fileinput_locale_ar.js" />
-    <Content Include="Scripts\fileinput_locale_bg.js" />
-    <Content Include="Scripts\fileinput_locale_ca.js" />
-    <Content Include="Scripts\fileinput_locale_cr.js" />
-    <Content Include="Scripts\fileinput_locale_cz.js" />
-    <Content Include="Scripts\fileinput_locale_da.js" />
-    <Content Include="Scripts\fileinput_locale_de.js" />
-    <Content Include="Scripts\fileinput_locale_el.js" />
-    <Content Include="Scripts\fileinput_locale_es.js" />
-    <Content Include="Scripts\fileinput_locale_fa.js" />
-    <Content Include="Scripts\fileinput_locale_fi.js" />
-    <Content Include="Scripts\fileinput_locale_fr.js" />
-    <Content Include="Scripts\fileinput_locale_hu.js" />
-    <Content Include="Scripts\fileinput_locale_id.js" />
-    <Content Include="Scripts\fileinput_locale_it.js" />
-    <Content Include="Scripts\fileinput_locale_ja.js" />
-    <Content Include="Scripts\fileinput_locale_LANG.js" />
-    <Content Include="Scripts\fileinput_locale_nl.js" />
-    <Content Include="Scripts\fileinput_locale_pl.js" />
-    <Content Include="Scripts\fileinput_locale_pt-BR.js" />
-    <Content Include="Scripts\fileinput_locale_pt.js" />
-    <Content Include="Scripts\fileinput_locale_ro.js" />
-    <Content Include="Scripts\fileinput_locale_ru.js" />
-    <Content Include="Scripts\fileinput_locale_sk.js" />
-    <Content Include="Scripts\fileinput_locale_th.js" />
-    <Content Include="Scripts\fileinput_locale_tr.js" />
-    <Content Include="Scripts\fileinput_locale_uk.js" />
-    <Content Include="Scripts\fileinput_locale_zh-TW.js" />
-    <Content Include="Scripts\fileinput_locale_zh.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap-tagsinput.min.js.map" />
     <Content Include="Scripts\bootstrap-tagsinput-angular.min.js.map" />
     <Content Include="Content\bootstrap-tagsinput.less" />
@@ -401,16 +442,65 @@
     <Content Include="Scripts\jquery-ui.custom.min.js" />
     <Content Include="Scripts\jquery.hoverIntent.min.js" />
     <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jquery-2.2.2.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jui_dropdown-1.0.4\jquery.jui_dropdown.css" />
     <Content Include="Scripts\jui_dropdown-1.0.4\jquery.jui_dropdown.js" />
     <Content Include="Scripts\jui_dropdown-1.0.4\jquery.jui_dropdown.min.js" />
+    <Content Include="Scripts\locales\ar.js" />
+    <Content Include="Scripts\locales\bg.js" />
+    <Content Include="Scripts\locales\ca.js" />
+    <Content Include="Scripts\locales\cr.js" />
+    <Content Include="Scripts\locales\cz.js" />
+    <Content Include="Scripts\locales\da.js" />
+    <Content Include="Scripts\locales\de.js" />
+    <Content Include="Scripts\locales\el.js" />
+    <Content Include="Scripts\locales\es.js" />
+    <Content Include="Scripts\locales\et.js" />
+    <Content Include="Scripts\locales\fa.js" />
+    <Content Include="Scripts\locales\fi.js" />
+    <Content Include="Scripts\locales\fr.js" />
+    <Content Include="Scripts\locales\gl.js" />
+    <Content Include="Scripts\locales\hu.js" />
+    <Content Include="Scripts\locales\id.js" />
+    <Content Include="Scripts\locales\it.js" />
+    <Content Include="Scripts\locales\ja.js" />
+    <Content Include="Scripts\locales\kr.js" />
+    <Content Include="Scripts\locales\kz.js" />
+    <Content Include="Scripts\locales\LANG.js" />
+    <Content Include="Scripts\locales\nl.js" />
+    <Content Include="Scripts\locales\no.js" />
+    <Content Include="Scripts\locales\pl.js" />
+    <Content Include="Scripts\locales\pt-BR.js" />
+    <Content Include="Scripts\locales\pt.js" />
+    <Content Include="Scripts\locales\ro.js" />
+    <Content Include="Scripts\locales\ru.js" />
+    <Content Include="Scripts\locales\sk.js" />
+    <Content Include="Scripts\locales\sl.js" />
+    <Content Include="Scripts\locales\sv.js" />
+    <Content Include="Scripts\locales\th.js" />
+    <Content Include="Scripts\locales\tr.js" />
+    <Content Include="Scripts\locales\uk.js" />
+    <Content Include="Scripts\locales\vi.js" />
+    <Content Include="Scripts\locales\zh-TW.js" />
+    <Content Include="Scripts\locales\zh.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\plugins\canvas-to-blob.js" />
+    <Content Include="Scripts\plugins\canvas-to-blob.min.js" />
+    <Content Include="Scripts\plugins\purify.js" />
+    <Content Include="Scripts\plugins\purify.min.js" />
+    <Content Include="Scripts\plugins\sortable.js" />
+    <Content Include="Scripts\plugins\sortable.min.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\tinymce\license.txt" />
     <Content Include="Scripts\tinymce\plugins\advlist\plugin.js" />
     <Content Include="Scripts\tinymce\plugins\advlist\plugin.min.js" />
@@ -595,9 +685,49 @@
     <Content Include="Views\TimeCategories\Edit.cshtml" />
     <Content Include="Views\TimeCategories\Index.cshtml" />
     <Content Include="Views\Matters\Taskless.cshtml" />
+    <Content Include="Views\Leads\Details.cshtml" />
+    <Content Include="Views\Opportunities\Details.cshtml" />
+    <Content Include="Views\LeadStatuses\Create.cshtml" />
+    <Content Include="Views\LeadStatuses\Edit.cshtml" />
+    <Content Include="Views\LeadStatuses\Details.cshtml" />
+    <Content Include="Views\LeadStatuses\Index.cshtml" />
+    <Content Include="Views\LeadStatuses\Delete.cshtml" />
+    <Content Include="Views\LeadSourceTypes\Create.cshtml" />
+    <Content Include="Views\LeadSourceTypes\Delete.cshtml" />
+    <Content Include="Views\LeadSourceTypes\Details.cshtml" />
+    <Content Include="Views\LeadSourceTypes\Edit.cshtml" />
+    <Content Include="Views\LeadSourceTypes\Index.cshtml" />
+    <Content Include="Views\LeadFees\Create.cshtml" />
+    <Content Include="Views\Leads\Edit.cshtml" />
+    <Content Include="Views\Leads\Create.cshtml" />
+    <Content Include="Views\Leads\Index.cshtml" />
+    <Content Include="Views\Leads\Convert.cshtml" />
+    <Content Include="Views\Opportunities\Index.cshtml" />
+    <Content Include="Views\Opportunities\Edit.cshtml" />
+    <Content Include="Views\Leads\Close.cshtml" />
+    <Content Include="Views\Opportunities\Close.cshtml" />
+    <Content Include="Views\ActivityPhonecalls\Details.cshtml" />
+    <Content Include="Views\ActivityPhonecalls\Create.cshtml" />
+    <Content Include="Views\ActivityPhonecalls\Edit.cshtml" />
+    <Content Include="Views\ActivityEmails\Create.cshtml" />
+    <Content Include="Views\ActivityEmails\Details.cshtml" />
+    <Content Include="Views\ActivityEmails\Edit.cshtml" />
+    <Content Include="Views\ActivityLetters\Create.cshtml" />
+    <Content Include="Views\ActivityLetters\Details.cshtml" />
+    <Content Include="Views\ActivityLetters\Edit.cshtml" />
+    <Content Include="Views\ActivityTasks\Create.cshtml" />
+    <Content Include="Views\ActivityTasks\Details.cshtml" />
+    <Content Include="Views\ActivityTasks\Edit.cshtml" />
+    <Content Include="Views\Opportunities\Convert.cshtml" />
+    <Content Include="Views\OpportunityStages\Create.cshtml" />
+    <Content Include="Views\OpportunityStages\Delete.cshtml" />
+    <Content Include="Views\OpportunityStages\Details.cshtml" />
+    <Content Include="Views\OpportunityStages\Edit.cshtml" />
+    <Content Include="Views\OpportunityStages\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\AccountJson\" />
+    <Folder Include="Views\LeadSources\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -781,19 +911,6 @@
     <Content Include="Views\Shared\_LayoutWithContextMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="Content\bootstrap.css.map" />
-    <Content Include="Content\bootstrap-theme.min.css.map" />
-    <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="fonts\FontAwesome.otf" />
-    <Content Include="fonts\fontawesome-webfont.woff2" />
-    <Content Include="fonts\fontawesome-webfont.woff" />
-    <Content Include="fonts\fontawesome-webfont.ttf" />
-    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="README.md" />
     <Content Include="Views\Tasks\PhoneCall.cshtml" />
@@ -829,7 +946,6 @@
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Views\Assets\Create.cshtml" />
-    <Content Include="Scripts\jquery-2.2.2.min.map" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -863,8 +979,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.4\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.4\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

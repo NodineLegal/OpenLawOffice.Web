@@ -9,7 +9,7 @@
 @section Breadcrumb {
     <ul class="breadcrumb">
         <li><a href="/Contacts">Contacts</a></li>
-        <li>Contact: <a href="/Contacts/Details">@(Model.DisplayName)</a></li>
+        <li>Contact: <a href="/Contacts/Details/@Model.Id">@(Model.DisplayName)</a></li>
         <li><a href="/Contacts/Edit/@(Model.Id)" class="active">Edit</a></li>
     </ul>
 }

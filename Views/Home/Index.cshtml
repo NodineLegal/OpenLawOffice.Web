@@ -61,178 +61,254 @@
             new SelectList(ViewBag.EmployeeContactList, "Id", "DisplayName"),
             new { @size = 1, @style = "width: 200px" })
             </h4>
+
             <div class="row">
                 <div class="col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Notifications
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-striped table-condensed table-hover table-text-small notifications">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: center;">
-                                            Title
-                                        </th>
-                                        <th style="text-align: center;">
-                                            Body
-                                        </th>
-                                        <th style="text-align: center; width: 25px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Notifications
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped table-condensed table-hover table-text-small notifications">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: center;">
+                                                    Title
+                                                </th>
+                                                <th style="text-align: center;">
+                                                    Body
+                                                </th>
+                                                <th style="text-align: center; width: 25px;">
 
-                                        </th>
-                                    </tr>
-                                </thead>
-                                @foreach (OpenLawOffice.Web.ViewModels.Notes.NoteNotificationViewModel item in Model.NotificationList)
-                                {
-                                    <tr>
-                                        <td>
-                                            @(Html.ActionLink(item.Note.Title, "Details", "Notes", new { id = item.Note.Id.Value }, null))
-                                        </td>
-                                        <td>
-                                            @(Html.Raw(item.Note.Body.Trim()))
-                                        </td>
-                                        <td>
-                                            <a href="/Notes/ClearNotification/@(item.Id.Value)?EmployeeId=@(Model.Employee.Id)"><span class="fa fa-times"></span></a>
-                                        </td>
-                                    </tr>
-                                }
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Taskless Matters
-                            <div style="float: right;">
-                                <div class="btn-group">
-                                    <button type="button" id="invoicesMatter" class="btn btn-xs btn-default" onclick="navTo('/Matters/Taskless')"><span class="fa fa-list"></span> List</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        @foreach (OpenLawOffice.Web.ViewModels.Notes.NoteNotificationViewModel item in Model.NotificationList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @(Html.ActionLink(item.Note.Title, "Details", "Notes", new { id = item.Note.Id.Value }, null))
+                                                </td>
+                                                <td>
+                                                    @(Html.Raw(item.Note.Body.Trim()))
+                                                </td>
+                                                <td>
+                                                    <a href="/Notes/ClearNotification/@(item.Id.Value)?EmployeeId=@(Model.Employee.Id)"><span class="fa fa-times"></span></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="panel-body" style="vertical-align: top;">
-                            <table style="border: 0; width: 100%; vertical-align: top;">
-                                <tr>
-                                    <td style="width: 200px; vertical-align: top;">
-                                        <canvas id="chart1" width="200" height="200" style="display: inline-block; float: left; padding-right: 15px;"></canvas>
-                                    </td>
-                                    <td style="vertical-align: top;">
-                                        <p class="text-muted" style="font-style: italic; margin-bottom: 15px;">Please consider adding tasks to or closing the following:</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Sales Activities
+                                </div>
+                                <div class="panel-body" style="vertical-align: top;">
 
-                                        <table class="table table-striped table-condensed table-hover table-text-small" style="width: 100%">
-                                            <tbody>
-                                                @foreach (var item in Model.TasklessActiveMatters)
-                                                {
-                                                    <tr>
-                                                        <td>@(Html.ActionLink(item.Title, "Details", "Matters", new { id = item.Id }, null))</td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <script type="text/javascript">
-                                var data = @(Html.Raw(ViewBag.MatterData));
-                                
-                                var ctx1 = $("#chart1").get(0).getContext("2d");
+                                    <table data-toggle="table" class="table table-striped table-hover table-condensed" style="font-size: 12px;">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-sm-1" data-field="functions" data-sortable="false">
 
-                                var chart1 = new Chart(ctx1).Doughnut(data.TasksInActiveMatters, {
-                                    animateRotate: false
+                                                </th>
+                                                <th class="col-sm-1" data-field="date" data-sortable="true">
+                                                    Due
+                                                </th>
+                                                <th class="col-sm-1" data-field="type" data-sortable="true">
+                                                    Type
+                                                </th>
+                                                <th data-field="details" data-sortable="false">
+                                                    Subject: <small class="text-muted">Body</small>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (Tuple<OpenLawOffice.Web.ViewModels.Activities.ActivityBaseViewModel, 
+                                                OpenLawOffice.Web.ViewModels.Activities.ActivityRegardingBaseViewModel> activity in Model.Activities)
+                                            {
+                                                <tr @if (activity.Item1.Due.HasValue && activity.Item1.Due.Value.Date == DateTime.Now.Date) { <text>class="warning"</text> }
+                                                else if (activity.Item1.Due.HasValue && activity.Item1.Due.Value.Date < DateTime.Now.Date) { <text>class="danger"</text> } >
+                                                    <td class="text-nowrap">
+                                                        <a href="/Activities/Edit/@activity.Item1.Id" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                                        <a href="/Activities/Details/@activity.Item1.Id" class="btn btn-xs btn-default"><i class="fa fa-info"></i></a>
+                                                        @if (activity.Item2.Type.Id.Value == 1)
+                                                        {
+                                                            OpenLawOffice.Web.ViewModels.Activities.ActivityRegardingLeadViewModel i2Vm =
+                                                                (OpenLawOffice.Web.ViewModels.Activities.ActivityRegardingLeadViewModel)activity.Item2;
+                                                            <a href="/Leads/Details/@i2Vm.Lead.Id.Value" class="btn btn-xs btn-default"><i class="fa fa-hand-stop-o"></i></a>
+                                                        }
+                                                        else if (activity.Item2.Type.Id.Value == 2)
+                                                        {
+                                                            OpenLawOffice.Web.ViewModels.Activities.ActivityRegardingOpportunityViewModel i2Vm =
+                                                                (OpenLawOffice.Web.ViewModels.Activities.ActivityRegardingOpportunityViewModel)activity.Item2;
+                                                            <a href="/Opportunities/Details/@i2Vm.Opportunity.Id.Value" class="btn btn-xs btn-default"><i class="fa fa-bullseye"></i></a>
+                                                        }
+                                                    </td>
+                                                    <td class="text-nowrap">@if (activity.Item1.Due.HasValue) { <text>@activity.Item1.Due.Value.ToShortDateString()</text> }</td>
+                                                    <td class="text-nowrap">@activity.Item1.Type.Title</td>
+                                                    <td>@activity.Item1.Subject: <small class="text-muted">@activity.Item1.Body</small></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Taskless Matters
+                                    <div style="float: right;">
+                                        <div class="btn-group">
+                                            <button type="button" id="invoicesMatter" class="btn btn-xs btn-default" onclick="navTo('/Matters/Taskless')"><span class="fa fa-list"></span> List</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body" style="vertical-align: top;">
+                                    <table style="border: 0; width: 100%; vertical-align: top;">
+                                        <tr>
+                                            <td style="width: 200px; vertical-align: top;">
+                                                <canvas id="chart1" width="200" height="200" style="display: inline-block; float: left; padding-right: 15px;"></canvas>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p class="text-muted" style="font-style: italic; margin-bottom: 15px;">Please consider adding tasks to or closing the following:</p>
+
+                                                <table class="table table-striped table-condensed table-hover table-text-small" style="width: 100%">
+                                                    <tbody>
+                                                        @foreach (var item in Model.TasklessActiveMatters)
+                                                        {
+                                                            <tr>
+                                                                <td>@(Html.ActionLink(item.Title, "Details", "Matters", new { id = item.Id }, null))</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <script type="text/javascript">
+                                var chart = new Chart(document.getElementById("chart1"), {
+                                    type: 'doughnut',
+                                    data: {
+                                        datasets: [{
+                                            data: [@ViewBag.MattersWithActiveTasks, @ViewBag.MattersWithoutActiveTasks],
+                                            backgroundColor: ['#00cc66', '#F7464A']
+                                        }],
+                                        labels: ['With Tasks', 'Without Tasks']
+                                    }
                                 });
-                            </script>
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Task List
+                                </div>
+                                <div class="panel-body">
+                                    <table class="table table-striped table-condensed table-hover table-text-small">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: center;">
+                                                    Matter
+                                                </th>
+                                                <th style="text-align: center;">
+                                                    Task
+                                                </th>
+                                                <th style="text-align: center;">
+                                                    Due Date
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        @foreach (var item in Model.MyTodoList)
+                                        {
+                                            if (item.Item2.DueDate.HasValue &&
+                                                item.Item2.DueDate.Value.Date < DateTime.Now.Date)
+                                            {
+                                                <tr class="danger">
+                                                    <td>
+                                                        @Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null)
+                                                    </td>
+                                                    <td>
+                                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
+                                                            <span class="fa fa-clock-o fa-lg"></span>
+                                                        </a>
+                                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
+                                                    </td>
+                                                    <td class="text-nowrap">
+                                                        @if (item.Item2.DueDate.HasValue)
+                                                        {
+                                                            @(String.Format("{0:g}", item.Item2.DueDate.Value))
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else if (item.Item2.DueDate.HasValue &&
+                                                item.Item2.DueDate.Value.Date == DateTime.Now.Date)
+                                            {
+                                                <tr class="warning">
+                                                    <td>
+                                                        @(Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null))
+                                                    </td>
+                                                    <td>
+                                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
+                                                            <span class="fa fa-clock-o fa-lg"></span>
+                                                        </a>
+                                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
+                                                    </td>
+                                                    <td class="text-nowrap">
+                                                        @if (item.Item2.DueDate.HasValue)
+                                                        {
+                                                            @(String.Format("{0:g}", item.Item2.DueDate.Value))
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @(Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null))
+                                                    </td>
+                                                    <td>
+                                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
+                                                            <span class="fa fa-clock-o fa-lg"></span>
+                                                        </a>
+                                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
+                                                    </td>
+                                                    <td class="text-nowrap">
+                                                        @if (item.Item2.DueDate.HasValue)
+                                                        {
+                                                            @(String.Format("{0:g}", item.Item2.DueDate.Value))
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Todo List
-                </div>
-                <div class="panel-body">
-                    <table class="table table-striped table-condensed table-hover table-text-small">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center;">
-                                    Matter
-                                </th>
-                                <th style="text-align: center;">
-                                    Task
-                                </th>
-                                <th style="text-align: center;">
-                                    Due Date
-                                </th>
-                            </tr>
-                        </thead>
-                        @foreach (var item in Model.MyTodoList)
-                        {
-                            if (item.Item2.DueDate.HasValue &&
-                                item.Item2.DueDate.Value.Date < DateTime.Now.Date)
-                            {
-                                <tr class="danger">
-                                    <td>
-                                        @Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null)
-                                    </td>
-                                    <td>
-                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
-                                            <span class="fa fa-clock-o fa-lg"></span></a>
-                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
-                                    </td>
-                                    <td>
-                                        @if (item.Item2.DueDate.HasValue)
-                                        {
-                                @(String.Format("{0:g}", item.Item2.DueDate.Value))
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                            else if (item.Item2.DueDate.HasValue &&
-                                item.Item2.DueDate.Value.Date == DateTime.Now.Date)
-                            {
-                                <tr class="warning">
-                                    <td>
-                                        @(Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null))
-                                    </td>
-                                    <td>
-                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
-                                            <span class="fa fa-clock-o fa-lg"></span>
-                                        </a>
-                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
-                                    </td>
-                                    <td>
-                                        @if (item.Item2.DueDate.HasValue)
-                                        {
-                                @(String.Format("{0:g}", item.Item2.DueDate.Value))
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td>
-                                        @(Html.ActionLink((string)item.Item1.Title, "Details", "Matters", new { id = item.Item1.Id.Value }, null))
-                                    </td>
-                                    <td>
-                                        <a href="@(Url.Action("Create", "TaskTime", new { ContactId = Model.Employee.Id, TaskId = item.Item2.Id.Value }))">
-                                            <span class="fa fa-clock-o fa-lg"></span>
-                                        </a>
-                                        @Html.ActionLink((string)item.Item2.Title, "Details", "Tasks", new { id = item.Item2.Id.Value }, null)
-                                    </td>
-                                    <td>
-                                        @if (item.Item2.DueDate.HasValue)
-                                        {
-                                @(String.Format("{0:g}", item.Item2.DueDate.Value))
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </table>
-                </div>
-            </div>
+            
+            
         }
     }
 }

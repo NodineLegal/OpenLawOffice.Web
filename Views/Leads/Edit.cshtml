@@ -1,0 +1,235 @@
+﻿@model OpenLawOffice.Web.ViewModels.Leads.LeadViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Edit Lead";
+    ViewBag.PageTitle = "Edit Lead";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Leads">Leads</a></li>
+        <li>Lead: <a href="/Leads/Details/@Model.Id">@(Model.Contact.DisplayName)</a></li>
+        <li><a href="/Leads/Edit/@Model.Id" class="active">Edit</a></li>
+    </ul>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#conflicts").click(function () {
+            window.location = '/Contacts/Conflicts/@(Model.Contact.Id)';
+        })
+        $("#matters").click(function () {
+            window.location = '/Contacts/Matters/@(Model.Contact.Id)';
+        })
+    })
+    $(document).ready(function () {
+        $('#Contact_DisplayName').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#Contact_Id").val(ui.item.Id);
+                $("#Contact_DisplayName").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#Contact_Id").val(ui.item.Id);
+                $("#Contact_DisplayName").val(ui.item.DisplayName);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.DisplayName + "</a>")
+            .appendTo(ul);
+        };
+        $('#Fee_To_DisplayName').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#Fee_To_Id").val(ui.item.Id);
+                $("#Fee_To_DisplayName").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#Fee_To_Id").val(ui.item.Id);
+                $("#Fee_To_DisplayName").val(ui.item.DisplayName);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.DisplayName + "</a>")
+            .appendTo(ul);
+        };
+    });
+    function contactSelector(title) {
+        $('#' + title + '_DisplayName').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_DisplayName').val('');
+        });
+        $('#' + title + '_DisplayName').autocomplete({
+            source: '/Contacts/ListDisplayNameOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+            .append('<a>' + item.DisplayName + '</a>')
+            .appendTo(ul);
+        };
+    }
+</script>
+
+@using (Html.BeginForm("Edit", "Leads", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Contact: @Model.Contact.DisplayName
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    <button id="conflicts" class="btn btn-xs btn-default"><span class="fa fa-shield"></span> Conflicts</button>
+                                    <button id="matters" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> Matters</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">Name:</div>
+                    <div class="col-sm-9">
+                        @(Html.HiddenFor(model => model.Contact.Id))
+                        @(Html.TextBoxFor(m => m.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Lead Information
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    <button id="convert" class="btn btn-xs btn-default"><span class="fa fa-bullseye"></span> Convert to Opportunity</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        Closed:
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="date" class="form-control" id="@Html.IdFor(m => m.Closed)" name="@Html.NameFor(m => m.Closed)" @if (Model.Closed != null && Model.Closed.HasValue) { <text> value="@Model.Closed.Value.ToString("yyyy-MM-dd")" </text>  } />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Status:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.DropDownListFor(x => x.Status.Id,
+                    new SelectList(ViewBag.LeadStatusList, "Id", "Title"),
+                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Source:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.DropDownListFor(x => x.Source.Id,
+                    new SelectList(ViewBag.LeadSourceList, "Id", "Title"),
+                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="row" style="height: 10px;"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee Eligible:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.HiddenFor(x => x.Fee.Id))
+                        @(Html.CheckBoxFor(m => m.Fee.IsEligible, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee To:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.HiddenFor(model => model.Fee.To.Id))
+                        @(Html.TextBoxFor(m => m.Fee.To.DisplayName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee Amount:
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="number" step="0.01" min="0" max="" name="@Html.NameFor(x => x.Fee.Amount)" id="@Html.IdFor(x => x.Fee.Amount)" value="@Model.Fee.Amount" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee Paid:
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="date" class="form-control" id="@Html.IdFor(m => m.Fee.Paid)" name="@Html.NameFor(m => m.Fee.Paid)" @if (Model.Fee != null && Model.Fee.Paid.HasValue) { <text>value="@Model.Fee.Paid.Value.ToString("yyyy-MM-dd")"</text> }/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee Details:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.TextBoxFor(m => m.Fee.AdditionalData, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="row" style="height: 10px;"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Lead Details:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.TextBoxFor(m => m.Details, new { @class = "form-control" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
+    </div>
+</div>
+}

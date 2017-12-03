@@ -1,0 +1,228 @@
+﻿@model OpenLawOffice.Web.ViewModels.Leads.DashboardViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Dashboard";
+    ViewBag.PageTitle = "Dashboard";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Leads" class="active">Leads</a></li>
+    </ul>
+}
+
+<script language="javascript">
+    var vars = [], hash;
+    var q = document.URL.split('?')[1];
+    if (q != undefined) {
+        q = q.split('&');
+        for (var i = 0; i < q.length; i++) {
+            hash = q[i].split('=');
+            vars.push(hash[1]);
+            vars[hash[0]] = hash[1];
+        }
+    }
+    $(document).ready(function () {
+        if (vars['contactFilter'] != null)
+            $('#contactFilter').val(decodeURIComponent(vars['contactFilter']));
+        if (vars['sourceFilter'] != null)
+            $('#sourceFilter').val(decodeURIComponent(vars['sourceFilter']));
+        if (vars['sourceTypeFilter'] != null)
+            $('#SelectedSourceType_Id').val(decodeURIComponent(vars['sourceTypeFilter']));
+        if (vars['statusTypeFilter'] != null)
+            $('#SelectedStatusType_Id').val(decodeURIComponent(vars['statusTypeFilter']));
+        
+        $('#goButton').click(function () {
+            go();
+        });
+        $('#contactFilter').focus(function () {
+            $('#contactFilter').val('');
+        });
+        $('#sourceFilter').focus(function () {
+            $('#sourceFilter').val('');
+        });
+        $('#contactFilter').keyup(function (e) {
+            if (e.keyCode == 13) go();
+        });
+        $('#sourceFilter').keyup(function (e) {
+            if (e.keyCode == 13) go();
+        });
+        $('#SelectedSourceType_Id').change(function () {
+            go();
+        });
+        $('#SelectedStatusType_Id').change(function () {
+            go();
+        });
+        $('#closedFilter').change(function () {
+            go();
+        });
+        $('#contactFilter').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#contactFilter").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#contactFilter").val(ui.item.DisplayName);
+                go();
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<a>" + item.DisplayName + "</a>")
+                .appendTo(ul);
+        };
+        $('#sourceFilter').autocomplete({
+            source: "/LeadSource/ListTitleOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#sourceFilter").val(ui.item.Title);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#sourceFilter").val(ui.item.Title);
+                go();
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<a>" + item.Title + "</a>")
+                .appendTo(ul);
+        };
+    });
+    function go() {
+        var href;
+        var contactFilter = $('#contactFilter').val().trim();
+        var sourceFilter = $('#sourceFilter').val().trim();
+        var sourceTypeFilter = $('#SelectedSourceType_Id').val();
+        var statusTypeFilter = $('#SelectedStatusType_Id').val();
+        var closedFilter = $('#closedFilter').val();
+        var base;
+        var qMarkAt = window.location.href.lastIndexOf('?');
+        $('#contactFilterGo').attr('disabled', 'disabled');
+        if (qMarkAt > 0)
+            base = window.location.href.substr(0, qMarkAt);
+        else
+            base = window.location.href;
+
+        href = base + '?a=';
+
+        if (contactFilter.length > 0)
+            href += '&contactFilter=' + contactFilter;
+        if (sourceFilter.length > 0)
+            href += '&sourceFilter=' + sourceFilter;
+        if (sourceTypeFilter.length > 0)
+            href += '&sourceTypeFilter=' + sourceTypeFilter;
+        if (statusTypeFilter.length > 0)
+            href += '&statusTypeFilter=' + statusTypeFilter;
+        if (closedFilter.length > 0) {
+            if (closedFilter == 'Open')
+                href += '&closedFilter=False';
+            else if (closedFilter == 'Closed')
+                href += '&closedFilter=True';
+            else if (closedFilter == 'Both')
+                href += '&closedFilter=Both';
+        }
+
+        window.location.href = href;
+    };
+</script>
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="form-inline row text-center">
+            <div class="form-group col-sm-12">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">Contact</div>
+                    <input type="text" class="form-control" id="contactFilter" placeholder="Contact Name" />
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">Source</div>
+                    <input type="text" class="form-control" id="sourceFilter" placeholder="Source" />
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">Source Type</div>
+                    @(Html.DropDownListFor(x => x.SelectedSourceType.Id,
+                    new SelectList(Model.SourceTypes, "Id", "Title"), "< Select >",
+                    new { @class = "form-control" }))
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">Status</div>
+                    @(Html.DropDownListFor(x => x.SelectedStatusType.Id,
+                    new SelectList(Model.StatusTypes, "Id", "Title"), "< Select >",
+                    new { @class = "form-control" }))
+                </div>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">Closed</div>
+                    <select class="form-control" id="closedFilter" name="closedFilter">
+                        <option value="Open">Open</option>
+                        <option value="Closed" @if (Request["closedFilter"] == "True") { <text>selected</text> }>Closed</option>
+                        <option value="Both" @if (Request["closedFilter"] == "Both") { <text>selected</text> }>Both</option>
+                    </select>
+                </div>
+                <button type="button" id="goButton" class="btn btn-sm btn-default"><span class="fa fa-search"></span> Lookup</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-condensed table-hover table-text-small notifications">
+                    <thead>
+                        <tr>
+                            <th class="text-center">
+                                Contact
+                            </th>
+                            <th style="text-align: center;">
+                                Status
+                            </th>
+                            <th style="text-align: center;">
+                                Source
+                            </th>
+                        </tr>
+                    </thead>
+                    @foreach (OpenLawOffice.Web.ViewModels.Leads.LeadViewModel item in Model.Leads)
+                    {
+                        <tr>
+                            <td>
+                                @(Html.ActionLink(item.Contact.DisplayName, "Details", "Leads", new { id = item.Id.Value }, null))
+                            </td>
+                            <td>
+                                @item.Status.Title
+                            </td>
+                            <td>
+                                @item.Source.Title
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="text-center">Leads by Source (30 days)</h3>
+                <canvas id="chart1" width="100" height="100"></canvas>
+                <script type="text/javascript">
+            var ctx = document.getElementById("chart1").getContext('2d');
+            ctx.canvas.width = 500;
+            ctx.canvas.height = 500;
+            var chart1 = new Chart(ctx, @Html.Raw(ViewBag.LeadSourceGraphData));
+                </script>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="text-center">Lead to Opportunities (12 months)</h3>
+                <canvas id="chart2" width="100" height="100"></canvas>
+                <script type="text/javascript">
+            var ctx2 = document.getElementById("chart2").getContext('2d');
+            ctx2.canvas.width = 500;
+            ctx2.canvas.height = 500;
+            var chart2 = new Chart(ctx2, @Html.Raw(ViewBag.LeadConversionGraphData));
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

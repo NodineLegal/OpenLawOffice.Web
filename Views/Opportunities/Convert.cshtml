@@ -1,0 +1,640 @@
+@model OpenLawOffice.Web.ViewModels.Opportunities.CreateOpportunityViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Opportunity Conversion";
+    ViewBag.PageTitle = "Opportunity Conversion";
+}
+
+<script language="javascript">
+    $(document).ready(function () {
+        contactSelector('Matter_BillTo');
+    });
+    function assignContactBinder(id) {
+        showHider('Contact' + id + '_IsParty', 'Contact' + id + '_PartyTitle_div');
+        showHider('Contact' + id + '_IsAttorney', 'Contact' + id + '_AttorneyFor_div');
+        showHider('Contact' + id + '_IsSupportStaff', 'Contact' + id + '_SupportStaffFor_div');
+        showHider('Contact' + id + '_IsThirdPartyPayor', 'Contact' + id + '_ThirdPartyPayorFor_div');
+        contactSelector('Contact' + id + '_Contact');
+        contactSelector('Contact' + id + '_AttorneyFor');
+        contactSelector('Contact' + id + '_SupportStaffFor');
+        contactSelector('Contact' + id + '_ThirdPartyPayorFor');
+    }
+    function showHide(cb, div) {
+        if ($("#" + cb).prop('checked'))
+            $("#" + div).show();
+        else
+            $("#" + div).hide();
+    }
+    function showHider(cb, div) {
+        $('#' + cb).change(function () {
+            showHide(cb, div);
+        })
+        showHide(cb, div);
+    }
+    function contactSelector(title) {
+        $('#' + title + '_DisplayName').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_DisplayName').val('');
+        });
+        $('#' + title + '_DisplayName').autocomplete({
+            source: '/Contacts/ListDisplayNameOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+            .append('<a>' + item.DisplayName + '</a>')
+            .appendTo(ul);
+        };
+    }
+</script>
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Opportunities">Opportunities</a></li>
+        <li>Opportunity: <a href="/Opportunities/Details/@Model.Opportunity.Id">@(Model.Opportunity.Account.DisplayName)</a></li>
+        <li><a href="/Opportunities/Convert/@Model.Opportunity.Id" class="active">Convert</a></li>
+    </ul>
+}
+
+
+@using (Html.BeginForm("Convert", "Opportunities", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    @(Html.ValidationSummary(true))
+    if (ViewBag.ErrorMessage != null)
+    {
+        <div style="color: Red;">@(ViewBag.ErrorMessage)</div>
+    }
+    if (ViewBag.OverrideConflict != null)
+    {
+        @(Html.Hidden("OverrideConflict", (string)ViewBag.OverrideConflict))
+    }
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="h4 col-sm-12" style="margin: 0px;">
+                            Lead Information
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Lead:
+                        </div>
+                        <div class="col-sm-9">
+                            @Model.Opportunity.Lead.Contact.DisplayName
+                            @Html.HiddenFor(x => x.Opportunity.Lead.Id)
+                            @Html.HiddenFor(x => x.Opportunity.Lead.Contact.Id)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Status:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.DropDownListFor(x => x.Opportunity.Lead.Status.Id,
+        new SelectList(ViewBag.LeadStatusList, "Id", "Title"),
+        new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Source:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.DropDownListFor(x => x.Opportunity.Lead.Source.Id,
+        new SelectList(ViewBag.LeadSourceList, "Id", "Title"),
+        new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row" style="height: 10px;"></div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Eligible:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.HiddenFor(x => x.Opportunity.Lead.Fee.Id))
+                            @(Html.CheckBoxFor(m => m.Opportunity.Lead.Fee.IsEligible, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee To:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.HiddenFor(model => model.Opportunity.Lead.Fee.To.Id))
+                            @(Html.TextBoxFor(m => m.Opportunity.Lead.Fee.To.DisplayName, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Amount:
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <div class="input-group-addon">$</div>
+                                <input type="number" step="0.01" min="0" max="" name="@Html.NameFor(x => x.Opportunity.Lead.Fee.Amount)" id="@Html.IdFor(x => x.Opportunity.Lead.Fee.Amount)" value="@Model.Opportunity.Lead.Fee.Amount" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Paid:
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="@Html.IdFor(m => m.Opportunity.Lead.Fee.Paid)" name="@Html.NameFor(m => m.Opportunity.Lead.Fee.Paid)" @if (Model.Opportunity.Lead.Fee != null && Model.Opportunity.Lead.Fee.Paid.HasValue) { <text> value="@Model.Opportunity.Lead.Fee.Paid.Value.ToString("yyyy-MM-dd")" </text>   } />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Details:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.TextBoxFor(m => m.Opportunity.Lead.Fee.AdditionalData, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                    <div class="row" style="height: 10px;"></div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Lead Details:
+                        </div>
+                        <div class="col-sm-9">
+                            @(Html.TextBoxFor(m => m.Opportunity.Lead.Details, new { @class = "form-control" }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="h4 col-sm-12" style="margin: 0px;">
+                                    Opportunity Information
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Account (Contact):
+                                </div>
+                                <div class="col-sm-9">
+                                    @(Html.HiddenFor(model => model.Opportunity.Account.Id))
+                                    @(Html.TextBoxFor(m => m.Opportunity.Account.DisplayName, new { @class = "form-control" }))
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Stage:
+                                </div>
+                                <div class="col-sm-9">
+                                    @(Html.DropDownListFor(x => x.Opportunity.Stage.Id,
+        new SelectList(ViewBag.StageList, "Id", "Title"),
+        new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                                </div>
+                            </div>
+                            <div class="row" style="height: 10px;"></div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Probability:
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="number" step="1" min="0" max="100" name="@Html.NameFor(x => x.Opportunity.Probability)" id="@Html.IdFor(x => x.Opportunity.Probability)" class="form-control" @if (Model.Opportunity.Probability.HasValue) { <text>value="@Model.Opportunity.Probability.Value"</text> } />
+                                        <div class="input-group-addon">%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Value:
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">$</div>
+                                        <input type="number" step="0.01" min="0" max="" name="@Html.NameFor(x => x.Opportunity.Amount)" id="@Html.IdFor(x => x.Opportunity.Amount)" class="form-control" @if (Model.Opportunity.Amount.HasValue) { <text>value="@Model.Opportunity.Amount.Value"</text> } />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Matter Information</div>
+        <div class="panel-body">
+            <h4>Details</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">Title<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.TextBoxFor(m => m.Matter.Title, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Matter Type<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.DropDownListFor(x => x.Matter.MatterType.Id,
+                            new SelectList(ViewBag.MatterTypeList, "Id", "Title"),
+                            new { @size = 1, @class = "form-control", @style = "width: 100%" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Active<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.CheckBoxFor(model => model.Matter.Active, new { @Checked = true, @class = "form-control", @style = "width:50px;" }))
+                        <span class="input-group-addon">Uncheck if completed</span>
+                    </div>
+                </div>
+            </div>        
+            <div class="row">
+                <div class="col-sm-12">
+                    <div>Synopsis<span class="required-field" title="Required Field">*</span></div>
+                    @(Html.TextAreaFor(m => m.Matter.Synopsis, new { @class = "form-control" }))
+                </div>
+            </div>
+
+            <h4>Financial Information</h4>
+            <div class="row">
+                <div class="col-sm-3">
+                    @(Html.HiddenFor(model => model.Matter.BillTo.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Bill To<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.TextBoxFor(m => m.Matter.BillTo.DisplayName, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Default Billing Rate<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.DropDownListFor(x => x.Matter.DefaultBillingRate.Id,
+                                new SelectList(ViewBag.BillingRateList, "Id", "Title"),
+                                new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Billing Group</span>
+                        @(Html.DropDownListFor(x => x.Matter.BillingGroup.Id,
+                                new SelectList(ViewBag.BillingGroupList, "Id", "Title"), "< NONE >",
+                                new { @size = 1, @class = "form-control", @style = "width: 100%" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Use Employee Rates<span class="required-field" title="Required Field">*</span></span>
+                        @(Html.CheckBoxFor(model => model.Matter.OverrideMatterRateWithEmployeeRate, new { @Checked = true, @class = "form-control", @style = "width:50px;" }))
+                    </div>
+                </div>
+            </div>
+
+            <h4>Court Information</h4>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Case No.</span>
+                        @(Html.TextBoxFor(m => m.Matter.CaseNumber, new { @class = "form-control" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Court Type</span>
+                        @(Html.DropDownListFor(x => x.Matter.CourtType.Id,
+                    new SelectList(ViewBag.CourtTypeList, "Id", "Title"), "< NONE >",
+                    new { @class = "form-control", @style = "width: 100%" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Jurisdiction</span>
+                        @(Html.DropDownListFor(x => x.Matter.CourtGeographicalJurisdiction.Id,
+                    new SelectList(ViewBag.CourtGeographicalJurisdictionList, "Id", "Title"), "< NONE >",
+                    new { @class = "form-control", @style = "width: 100%" }))
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">Location</span>
+                        @(Html.DropDownListFor(x => x.Matter.CourtSittingInCity.Id,
+                    new SelectList(ViewBag.CourtSittingInCityList, "Id", "Title"), "< NONE >",
+                    new { @class = "form-control", @style = "width: 100%" }))
+                    </div>
+                </div>
+            </div>
+
+            <h4>Contacts</h4>
+            <div class="row">
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">
+                    @(Html.HiddenFor(model => model.Contact1.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact1.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact1.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact1_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact1.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact1_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact1.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact1.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact1_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact1.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact1.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact1_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact1.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact1.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(1);
+                        });
+                    </script>
+                </div>
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px; background-color: #f0f0f0;">
+                    @(Html.HiddenFor(model => model.Contact2.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact2.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact2.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact2_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact2.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact2_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact2.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact2.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact2_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact2.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact2.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact2_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact2.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact2.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(2);
+                        });
+                    </script>
+                </div>
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">
+                    @(Html.HiddenFor(model => model.Contact3.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact3.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact3.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact3_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact3.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact3_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact3.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact3.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact3_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact3.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact3.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact3_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact3.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact3.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(3);
+                        });
+                    </script>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px; background-color: #f0f0f0;">
+                    @(Html.HiddenFor(model => model.Contact4.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact4.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact4.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact4_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact4.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact4_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact4.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact4.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact4_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact4.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact4.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact4_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact4.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact4.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(4);
+                        });
+                    </script>
+                </div>
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">
+                    @(Html.HiddenFor(model => model.Contact5.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact5.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact5.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact5_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact5.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact5_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact5.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact5.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact5_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact5.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact5.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact5_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact5.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact5.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(5);
+                        });
+                    </script>
+                </div>
+                <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px; background-color: #f0f0f0;">
+                    @(Html.HiddenFor(model => model.Contact6.Contact.Id))
+                    <div class="input-group">
+                        <span class="input-group-addon">Contact</span>
+                        @(Html.TextBoxFor(model => model.Contact6.Contact.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsClient)) Client</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsClientContact)) Client Contact</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsAppointed)) Appointed</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsParty)) Party</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsJudge)) Judge</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsWitness)) Witness</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsAttorney)) Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsLeadAttorney)) Lead Attorney</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsSupportStaff)) Support Staff</span>
+                    <span class="nowrap text-nowrap">@(Html.CheckBoxFor(model => model.Contact6.IsThirdPartyPayor)) Third Party Payor</span>
+
+                    <div id="Contact6_PartyTitle_div" class="input-group">
+                        <span class="input-group-addon">Party Title</span>
+                        @(Html.TextBoxFor(model => model.Contact6.PartyTitle, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact6_AttorneyFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact6.AttorneyFor.Id))
+                        <span class="input-group-addon">Attorney For</span>
+                        @(Html.TextBoxFor(model => model.Contact6.AttorneyFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact6_SupportStaffFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact6.SupportStaffFor.Id))
+                        <span class="input-group-addon">Support Staff For</span>
+                        @(Html.TextBoxFor(model => model.Contact6.SupportStaffFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <div id="Contact6_ThirdPartyPayorFor_div" class="input-group">
+                        @(Html.HiddenFor(model => model.Contact6.ThirdPartyPayorFor.Id))
+                        <span class="input-group-addon">Third Party Payor For</span>
+                        @(Html.TextBoxFor(model => model.Contact6.ThirdPartyPayorFor.DisplayName, new { @class = "form-control" }))
+                    </div>
+
+                    <script language="javascript">
+                        $(document).ready(function () {
+                            assignContactBinder(6);
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12 text-center">
+                    <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

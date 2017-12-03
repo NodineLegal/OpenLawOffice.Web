@@ -7,6 +7,7 @@ using System.Web.Routing;
 using System.IO;
 using System.Web.Profile;
 using System.Data;
+using OpenLawOffice.Common.Models.Assets;
 
 namespace OpenLawOffice.Web.Controllers
 {
@@ -174,11 +175,12 @@ namespace OpenLawOffice.Web.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+        [AllowAnonymous]
         public ActionResult Matters(string contactFilter, string titleFilter, string caseNumberFilter,
             int? courtTypeFilter, int? courtGeographicalJurisdictionFilter, bool activeFilter = true)
         {
             Guid token;
-            Common.Net.Response<List<Common.Models.Matters.Matter>> response 
+            Common.Net.Response<List<Common.Models.Matters.Matter>> response
                 = new Common.Net.Response<List<Common.Models.Matters.Matter>>();
 
             response.RequestReceived = DateTime.Now;
@@ -204,7 +206,7 @@ namespace OpenLawOffice.Web.Controllers
                     }
 
                     response.Successful = true;
-                    response.Package = Data.Matters.Matter.List(trans, activeFilter, contactFilter, titleFilter, 
+                    response.Package = Data.Matters.Matter.List(trans, activeFilter, contactFilter, titleFilter,
                         caseNumberFilter, courtTypeFilter, courtGeographicalJurisdictionFilter);
                 }
                 catch
@@ -220,11 +222,12 @@ namespace OpenLawOffice.Web.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ListFormsForMatter(Guid matterId)
+        [AllowAnonymous]
+        public ActionResult GetMatter(Guid matterId)
         {
             Guid token;
-            Common.Net.Response<List<Common.Models.Forms.Form>> response
-                = new Common.Net.Response<List<Common.Models.Forms.Form>>();
+            Common.Net.Response<Common.Models.Matters.Matter> response
+                = new Common.Net.Response<Common.Models.Matters.Matter>();
 
             response.RequestReceived = DateTime.Now;
 
@@ -249,7 +252,7 @@ namespace OpenLawOffice.Web.Controllers
                     }
 
                     response.Successful = true;
-                    response.Package = Data.Forms.Form.ListForMatter(matterId);
+                    response.Package = Data.Matters.Matter.Get(trans, matterId);
                 }
                 catch
                 {
@@ -264,11 +267,281 @@ namespace OpenLawOffice.Web.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
-        public FileResult DownloadForm(int id)
+        [AllowAnonymous]
+        public ActionResult GetAsset(Guid assetId)
         {
             Guid token;
-            string ext = "";
-            Common.Models.Forms.Form model;
+            Common.Net.Response<Common.Models.Assets.Asset> response
+                = new Common.Net.Response<Common.Models.Assets.Asset>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Assets.Asset.Get(trans, assetId);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult GetFile(Guid fileId)
+        {
+            Guid token;
+            Common.Net.Response<Common.Models.Assets.File> response
+                = new Common.Net.Response<Common.Models.Assets.File>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Assets.File.Get(trans, fileId);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ListCourtTypes()
+        {
+            Guid token;
+            Common.Net.Response<List<Common.Models.Matters.CourtType>> response
+                = new Common.Net.Response<List<Common.Models.Matters.CourtType>>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Matters.CourtType.List(trans);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ListCourtGeographicalJurisdictions()
+        {
+            Guid token;
+            Common.Net.Response<List<Common.Models.Matters.CourtGeographicalJurisdiction>> response
+                = new Common.Net.Response<List<Common.Models.Matters.CourtGeographicalJurisdiction>>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Matters.CourtGeographicalJurisdiction.List(trans);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ListAssetsForMatter(Guid matterId)
+        {
+            Guid token;
+            Common.Net.Response<List<Common.Models.Assets.Asset>> response
+                = new Common.Net.Response<List<Common.Models.Assets.Asset>>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Assets.Asset.ListForMatter(trans, matterId);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ListFilesForAsset(Guid assetId)
+        {
+            Guid token;
+            Common.Net.Response<List<Common.Models.Assets.File>> response
+                = new Common.Net.Response<List<Common.Models.Assets.File>>();
+
+            response.RequestReceived = DateTime.Now;
+
+            if ((token = GetToken(Request)) == Guid.Empty)
+            {
+                response.Successful = false;
+                response.Error = "Invalid Token";
+                response.ResponseSent = DateTime.Now;
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            using (Data.Transaction trans = Data.Transaction.Create(true))
+            {
+                try
+                {
+                    if (!VerifyToken(trans, token))
+                    {
+                        response.Successful = false;
+                        response.Error = "Invalid Token";
+                        response.ResponseSent = DateTime.Now;
+                        return Json(response, JsonRequestBehavior.AllowGet);
+                    }
+
+                    response.Successful = true;
+                    response.Package = Data.Assets.Asset.ListFilesForMostRecentVersion(trans, assetId);
+                }
+                catch
+                {
+                    trans.Rollback();
+                    response.Successful = false;
+                    response.Package = null;
+                    response.Error = "Unexpected server error.";
+                }
+            }
+
+            response.ResponseSent = DateTime.Now;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public FileResult DownloadFile(Guid id)
+        {
+            Guid token;
+            Common.Models.Assets.File file;
 
             if ((token = GetToken(Request)) == Guid.Empty)
             {
@@ -283,8 +556,10 @@ namespace OpenLawOffice.Web.Controllers
                     {
                         return null;
                     }
-
-                    model = Data.Forms.Form.Get(trans, id);
+                    
+                    file = Data.Assets.File.Get(trans, id);
+                    file.Version = Data.Assets.Version.Get(trans, file.Version.Id.Value);
+                    file.Version.Asset = Data.Assets.Asset.Get(trans, file.Version.Asset.Id.Value);
                 }
                 catch
                 {
@@ -293,10 +568,11 @@ namespace OpenLawOffice.Web.Controllers
                 }
             }
 
-            if (Path.HasExtension(model.Path))
-                ext = Path.GetExtension(model.Path);
+            Common.FileSystem.Asset fsAsset = new Common.FileSystem.Asset(file.Version.Asset);
+            Common.FileSystem.Version fsVersion = new Common.FileSystem.Version(fsAsset, file.Version);
+            Common.FileSystem.File fsFile = new Common.FileSystem.File(fsAsset, fsVersion, file);
 
-            return File(model.Path, Common.Utilities.GetMimeType(ext), model.Title + ext);
+            return File(fsFile.Path, file.ContentType.ToValue(), file.Version.Asset.Title + file.Extension);
         }
 
         public ActionResult GetFormDataForMatter(Data.Transaction trans, Guid id)

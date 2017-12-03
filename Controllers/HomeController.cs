@@ -116,26 +116,42 @@ namespace OpenLawOffice.Web.Controllers
                         viewModel.TasklessActiveMatters.Add(Mapper.Map<ViewModels.Matters.MatterViewModel>(x));
                     });
 
+                    viewModel.Activities = new List<Tuple<ViewModels.Activities.ActivityBaseViewModel, ViewModels.Activities.ActivityRegardingBaseViewModel>>();
+                    Data.Activities.ActivityTask.GetGeneralActivities(employee.Id.Value, conn, false).ForEach(x =>
+                    {
+                        Tuple<ViewModels.Activities.ActivityBaseViewModel, ViewModels.Activities.ActivityRegardingBaseViewModel> vm = null;
+                        ViewModels.Activities.ActivityBaseViewModel vm1;
+
+                        x.Type = Data.Activities.ActivityType.Get(x.Type.Id.Value, conn, false);
+
+                        vm1 = Mapper.Map<ViewModels.Activities.ActivityBaseViewModel>(x);
+                        vm1.Type = Mapper.Map<ViewModels.Activities.ActivityTypeViewModel>(x.Type);
+
+                        Common.Models.Activities.ActivityRegardingType regardingModel = Data.Activities.ActivityRegardingType.GetFromActivityId(x.Id.Value, conn, false);
+                        
+                        if (regardingModel.Title == "Lead")
+                        {
+                            Common.Models.Activities.ActivityRegardingLead lm = Data.Activities.ActivityRegardingLead.GetFromActivityId(x.Id.Value, conn, false);
+                            vm = new Tuple<ViewModels.Activities.ActivityBaseViewModel, ViewModels.Activities.ActivityRegardingBaseViewModel>(vm1,
+                                Mapper.Map<ViewModels.Activities.ActivityRegardingLeadViewModel>(lm));
+                        }
+                        else if (regardingModel.Title == "Opportunity")
+                        {
+                            Common.Models.Activities.ActivityRegardingOpportunity om = Data.Activities.ActivityRegardingOpportunity.GetFromActivityId(x.Id.Value, conn, false);
+                            vm = new Tuple<ViewModels.Activities.ActivityBaseViewModel, ViewModels.Activities.ActivityRegardingBaseViewModel>(vm1,
+                                Mapper.Map<ViewModels.Activities.ActivityRegardingOpportunityViewModel>(om));
+                        }
+
+                        viewModel.Activities.Add(vm);
+                    });
+
                     Random rnd = new Random();
                     int activeMatters = Data.Matters.Matter.CountAllActiveMatters(conn, false);
                     int activeMattersWithoutTasks = Data.Matters.Matter.CountAllMattersWithoutActiveTasks(conn, false);
+                    ViewBag.MattersWithActiveTasks = activeMatters - activeMattersWithoutTasks;
+                    ViewBag.MattersWithoutActiveTasks = activeMattersWithoutTasks;
 
-                    ViewModels.Home.DashboardGraphDataViewModel graphs = new ViewModels.Home.DashboardGraphDataViewModel();
-
-                    graphs.TasksInActiveMatters.Add(new ViewModels.Home.DashboardGraphDataViewModel.ChartItem()
-                    {
-                        value = activeMattersWithoutTasks,
-                        color = "#F7464A",
-                        label = "Without Tasks"
-                    });
-                    graphs.TasksInActiveMatters.Add(new ViewModels.Home.DashboardGraphDataViewModel.ChartItem()
-                    {
-                        value = activeMatters - activeMattersWithoutTasks,
-                        color = "#00cc66",
-                        label = "With Tasks"
-                    });
-
-                    ViewBag.MatterData = Newtonsoft.Json.JsonConvert.SerializeObject(graphs);
+                   
                 }
             }
 

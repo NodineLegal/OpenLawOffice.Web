@@ -1,0 +1,204 @@
+﻿@model OpenLawOffice.Web.ViewModels.Activities.ActivityLetterViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Edit Letter Activity";
+    ViewBag.PageTitle = "Edit Letter Activity";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Activities">Activities</a></li>
+        <li>Activity: <a href="/Activities/Details/@Model.Id">@(Model.Subject)</a></li>
+        <li><a href="/Activities/Edit/@(Model.Id)" class="active">Edit</a></li>
+    </ul>
+}
+
+<script language="javascript">
+    $(document).ready(function () {
+        contactSelector("Sender");
+        contactSelector("Recipient");
+        contactSelector("Owner");
+    });
+    function contactSelector(title) {
+        $('#' + title + '_DisplayName').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_DisplayName').val('');
+        });
+        $('#' + title + '_DisplayName').autocomplete({
+            source: '/Contacts/ListDisplayNameOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+                .append('<a>' + item.DisplayName + '</a>')
+                .appendTo(ul);
+        };
+    }
+</script>
+
+@using (Html.BeginForm("Edit", "ActivityLetters", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    @Html.HiddenFor(x => x.RegardingLead.Type.Id)
+    @Html.HiddenFor(x => x.RegardingLead.Lead.Id)
+    @Html.HiddenFor(x => x.RegardingOpportunity.Type.Id)
+    @Html.HiddenFor(x => x.RegardingOpportunity.Opportunity.Id)
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="h4 col-sm-6" style="margin: 0px;">
+                            Letter Activity
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            @*<div class="container-fluid">
+                                    <div class="row text-right">
+                                        <div class="btn-group">
+                                            <button id="conflicts" class="btn btn-xs btn-default"><span class="fa fa-shield"></span> Conflicts</button>
+                                            <button id="matters" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> Matters</button>
+                                        </div>
+                                    </div>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            @(Html.HiddenFor(model => model.Sender.Id))
+                            <div class="input-group">
+                                <span class="input-group-addon">From:</span>
+                                @(Html.TextBoxFor(model => model.Sender.DisplayName, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            @(Html.HiddenFor(model => model.Recipient.Id))
+                            <div class="input-group">
+                                <span class="input-group-addon">To:</span>
+                                @(Html.TextBoxFor(model => model.Recipient.DisplayName, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">Address:</span>
+                                <input type="text" id="@Html.IdFor(model => model.Address)" name="@Html.NameFor(model => model.Address)" class="form-control" value="@Model.Address" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Direction:</span>
+                                @(Html.DropDownListFor(x => x.Direction.Id,
+                                    new SelectList(ViewBag.DirectionList, "Id", "Title"),
+                                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Status Reason:</span>
+                                @(Html.DropDownListFor(x => x.StatusReason.Id,
+                                    new SelectList(ViewBag.StatusReasonList, "Id", "Secondary"),
+                                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Priority:</span>
+                                @(Html.DropDownListFor(x => x.Priority.Id,
+                                    new SelectList(ViewBag.PriorityList, "Id", "Title"),
+                                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Check if Active:</span>
+                                @(Html.CheckBoxFor(model => model.State, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="height:30px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <span class="input-group-addon">Subject:</span>
+                                @(Html.TextBoxFor(m => m.Subject, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">@Html.TextAreaFor(model => model.Body, new { @class = "form-control", @rows = "8" })</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" style="height:30px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">Regarding:</div>
+                        <div class="col-sm-10">
+                            @if (Model.RegardingLead != null)
+                            {
+                                <text>@Html.ActionLink(Model.RegardingLead.Lead.Contact.DisplayName, "Details", "Leads", new { id = Model.RegardingLead.Lead.Id }, null) (lead)</text>
+                            }
+                            else if (Model.RegardingOpportunity != null)
+                            {
+                                <text>@Html.ActionLink(Model.RegardingOpportunity.Opportunity.Account.DisplayName, "Details", "Opportunities", new { id = Model.RegardingOpportunity.Opportunity.Id }, null) (opportunity)</text>
+                            }
+                            else
+                            {
+                                <text>Unknown Regarding Type</text>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @(Html.HiddenFor(model => model.Owner.Id))
+                            <div class="input-group">
+                                <span class="input-group-addon">Owner:</span>
+                                @(Html.TextBoxFor(m => m.Owner.DisplayName, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Due:</span>
+                                <input type="datetime-local" id="@Html.IdFor(model => model.Due)" name="@Html.NameFor(model => model.Due)" class="form-control"
+                                       @if (Model.Due != null && Model.Due.HasValue) { <text> value="@Model.Due.Value.ToString("s")" </text>  } />
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Duration:</span>
+                                <input type="number" id="@Html.IdFor(model => model.Duration)" name="@Html.NameFor(model => model.Duration)" class="form-control" step="1" min="0"
+                                       @if (Model.Duration != null && Model.Duration.HasValue) { <text> value="@Model.Duration.Value" </text>   } />
+                                <span class="input-group-addon">minutes</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <span class="input-group-addon">Check if Campaign Reponse:</span>
+                                @(Html.CheckBoxFor(model => model.IsCampaignResponse, new { @class = "form-control" }))
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,217 @@
+﻿@model OpenLawOffice.Web.ViewModels.Activities.ActivityPhonecallViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Phonecall Activity Details";
+    ViewBag.PageTitle = "Phonecall Activity Details";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Activities">Activities</a></li>
+        <li>Activity: <a href="/ActivityPhonecalls/Details/@Model.Id" class="active">@(Model.Subject)</a></li>
+    </ul>
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Phone Call Activity
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    <a href="../Edit/@(Model.Id)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Call From:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @Html.ActionLink(Model.Sender.DisplayName, "Details", "Contacts", new { id = Model.Sender.Id }, null)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Call To:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @Html.ActionLink(Model.Recipient.DisplayName, "Details", "Contacts", new { id = Model.Recipient.Id }, null)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Phone Number:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @Model.PhoneNumber
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Direction:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @Model.Direction.Title
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Status Reason:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @(Model.StatusReason.Primary) | @(Model.StatusReason.Secondary)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Priority:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @(Model.Priority.Title)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                State:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @if (Model.State)
+                                {
+                                    <span style="color: green;">Active</span>
+                                }
+                                else
+                                {
+                                    <span style="color: red;">Inactive</span>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" style="height:30px;"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="margin: 0px 15px 0px 15px">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <span style="font-weight: bold">Subject:</span> @Model.Subject
+                                </div>
+                                <div class="panel-body">
+                                    @Html.Raw(Model.Body)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" style="height:30px;"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Regarding:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @if (Model.RegardingLead != null)
+                                {
+                                    <text>@Html.ActionLink(Model.RegardingLead.Lead.Contact.DisplayName, "Details", "Leads", new { id = Model.RegardingLead.Lead.Id }, null) (lead)</text>
+                                }
+                                else if (Model.RegardingOpportunity != null)
+                                {
+                                    <text>@Html.ActionLink(Model.RegardingOpportunity.Opportunity.Account.DisplayName, "Details", "Opportunities", new { id = Model.RegardingOpportunity.Opportunity.Id }, null) (opportunity)</text>
+                                }
+                                else
+                                {
+                                    <text>Unknown Regarding Type</text>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Campaign Reponse:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @OpenLawOffice.Web.Helpers.BooleanHelper.YesNo(Model.IsCampaignResponse)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Duration:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @if (Model.Duration.HasValue)
+                                {
+                                    <text>@Model.Duration min.</text>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Owner:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @Html.ActionLink(Model.Owner.DisplayName, "Details", "Contacts", new { id = Model.Owner.Id }, null)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="font-size: 14px; line-height: 20px; height: 34px;">
+                            <span style="color: rgb(85, 85, 85); background-color: #eee; border: 1px solid rgb(204, 204, 204); border-right: none; border-bottom-left-radius: 4px; border-top-left-radius: 4px; padding: 6px 12px 6px 12px;">
+                                Due:
+                            </span>
+                            <span style="color: rgb(85, 85, 85); border: 1px solid rgb(204, 204, 204); border-left: none; border-bottom-right-radius: 4px; border-top-right-radius: 4px; padding: 6px 12px 6px 12px;">
+                                @if (Model.Due.HasValue)
+                                {
+                                    <text>@(String.Format("{0:g}", Model.Due.Value))</text>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{ Html.RenderPartial("_CoreDetails");}

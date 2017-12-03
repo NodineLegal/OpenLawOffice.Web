@@ -222,15 +222,23 @@ namespace OpenLawOffice.Web.Controllers
         public ActionResult Edit(int id, ViewModels.Contacts.ContactViewModel viewModel)
         {
             Common.Models.Account.Users currentUser = null;
-            Common.Models.Contacts.Contact model;
+            Common.Models.Contacts.Contact model, oldModel;
 
             using (Data.Transaction trans = Data.Transaction.Create(true))
             {
                 try
                 {
+                    // When modifying a user, if they have a billing rate then if they are being modified from an employee to not an employee (terminated)
+                    // we need to make sure and retain that billing rate - needs to also retain the rate for future edits - basically, once there is a billing rate
+                    // there will always be a billing rate
+
                     currentUser = Data.Account.Users.Get(trans, User.Identity.Name);
 
                     model = Mapper.Map<Common.Models.Contacts.Contact>(viewModel);
+
+                    oldModel = Data.Contacts.Contact.Get(trans, id);
+                    if (oldModel.BillingRate != null && oldModel.BillingRate.Id.HasValue)
+                        model.BillingRate = oldModel.BillingRate;
 
                     model = Data.Contacts.Contact.Edit(trans, model, currentUser);
 

@@ -109,6 +109,11 @@ namespace OpenLawOffice.Web.Controllers
                     employeeContactList.Add(Mapper.Map<ViewModels.Contacts.ContactViewModel>(x));
                 });
 
+                if (!employeeContactList.Exists(x => x.Id == model.Worker.Id))
+                {
+                    employeeContactList.Add(Mapper.Map<ViewModels.Contacts.ContactViewModel>(Data.Contacts.Contact.Get(model.Worker.Id.Value, conn, false)));
+                }
+
                 ViewBag.TaskId = task.Id.Value;
 
                 matter = Data.Tasks.Task.GetRelatedMatter(task.Id.Value, conn, false);

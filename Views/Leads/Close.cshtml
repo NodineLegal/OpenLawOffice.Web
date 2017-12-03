@@ -1,0 +1,372 @@
+﻿@model OpenLawOffice.Web.ViewModels.Leads.LeadViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Close Lead";
+    ViewBag.PageTitle = "Close Lead";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Leads">Leads</a></li>
+        <li>Lead: <a href="/Leads/Details/@Model.Id">@(Model.Contact.DisplayName)</a></li>
+        <li><a href="/Leads/Close/@Model.Id" class="active">Close</a></li>
+    </ul>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#conflicts").click(function () {
+            window.location = '/Contacts/Conflicts/@(Model.Contact.Id)';
+        })
+        $("#matters").click(function () {
+            window.location = '/Contacts/Matters/@(Model.Contact.Id)';
+        })
+        $("#convert").click(function () {
+            window.location = '/Leads/Convert/@(Model.Id)';
+        })
+        $("#edit").click(function () {
+            window.location = '/Leads/Edit/@(Model.Id)';
+        })
+        $("#close").click(function () {
+            window.location = '/Leads/Close/@(Model.Id)';
+        })
+    })
+</script>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Contact: @Model.Contact.DisplayName
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    <button id="conflicts" class="btn btn-xs btn-default"><span class="fa fa-shield"></span> Conflicts</button>
+                                    <button id="matters" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> Matters</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">Name:</div>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Contact.GivenName))
+                        {
+                            <text>@Model.Contact.GivenName </text>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Contact.MiddleName))
+                        {
+                            <text>@Model.Contact.MiddleName </text>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Contact.Surname))
+                        {
+                            <text>@Model.Contact.Surname </text>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Contact.Generation))
+                        {
+                            <text>@Model.Contact.Generation </text>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        @if (!string.IsNullOrEmpty(Model.Contact.Address2AddressStreet))
+                    {<text>Mailing </text>}Address:
+                </div>
+                <div class="col-sm-9">
+                    @if (!string.IsNullOrEmpty(Model.Contact.Address1AddressStreet) && !string.IsNullOrEmpty(Model.Contact.Address1AddressCity))
+                    {
+                        string alink = Model.Contact.Address1AddressStreet;
+                        if (!string.IsNullOrEmpty(Model.Contact.Address1AddressLine2))
+                        {
+                            alink += " " + Model.Contact.Address1AddressLine2;
+                        }
+                        if (!string.IsNullOrEmpty(Model.Contact.Address1AddressCity))
+                        {
+                            alink += ", " + Model.Contact.Address1AddressCity;
+                        }
+                        if (!string.IsNullOrEmpty(Model.Contact.Address1AddressStateOrProvince))
+                        {
+                            alink += ", " + Model.Contact.Address1AddressStateOrProvince;
+                        }
+                        <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                                @Model.Contact.Address1AddressStreet<br />
+                                @if (!string.IsNullOrEmpty(Model.Contact.Address1AddressLine2))
+                                {<text>@Model.Contact.Address1AddressLine2<br /></text>}
+                                @Model.Contact.Address1AddressCity, @Model.Contact.Address1AddressStateOrProvince @Model.Contact.Address1AddressPostalCode
+                            </a></text>
+                    }
+                    else
+                    {
+                        <text>
+                            @Model.Contact.Address1AddressStreet<br />
+                            @if (!string.IsNullOrEmpty(Model.Contact.Address1AddressLine2))
+                            {<text>@Model.Contact.Address1AddressLine2<br /></text>}
+                            @Model.Contact.Address1AddressCity, @Model.Contact.Address1AddressStateOrProvince @Model.Contact.Address1AddressPostalCode
+                        </text>
+                    }
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Contact.Address2AddressStreet))
+            {
+                <div class="row">
+                    <div class="col-sm-3">Physical Address:</div>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Contact.Address2AddressStreet) && !string.IsNullOrEmpty(Model.Contact.Address2AddressCity))
+                        {
+                            string alink = Model.Contact.Address2AddressStreet;
+                            if (!string.IsNullOrEmpty(Model.Contact.Address2AddressLine2))
+                            {
+                                alink += " " + Model.Contact.Address2AddressLine2;
+                            }
+                            if (!string.IsNullOrEmpty(Model.Contact.Address2AddressCity))
+                            {
+                                alink += ", " + Model.Contact.Address2AddressCity;
+                            }
+                            if (!string.IsNullOrEmpty(Model.Contact.Address2AddressStateOrProvince))
+                            {
+                                alink += ", " + Model.Contact.Address2AddressStateOrProvince;
+                            }
+                            <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                                    @Model.Contact.Address2AddressStreet<br />
+                                    @if (!string.IsNullOrEmpty(Model.Contact.Address2AddressLine2))
+                                    {<text>@Model.Contact.Address2AddressLine2<br /></text>}
+                                    @Model.Contact.Address2AddressCity, @Model.Contact.Address2AddressStateOrProvince @Model.Contact.Address2AddressPostalCode
+                                </a></text>
+                        }
+                        else
+                        {
+                            <text>
+                                @Model.Contact.Address2AddressStreet<br />
+                                @if (!string.IsNullOrEmpty(Model.Contact.Address2AddressLine2))
+                                {<text>@Model.Contact.Address2AddressLine2<br /></text>}
+                                @Model.Contact.Address2AddressCity, @Model.Contact.Address2AddressStateOrProvince @Model.Contact.Address2AddressPostalCode
+                            </text>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-sm-3">
+                    @if (!string.IsNullOrEmpty(Model.Contact.Telephone2TelephoneNumber))
+                {<text>Phone 1</text>}
+                else
+                {<text>Phone</text>}:
+            </div>
+            <div class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Contact.Telephone1TelephoneNumber))
+                { <text><a href="tel:@Model.Contact.Telephone1TelephoneNumber">@Model.Contact.Telephone1TelephoneNumber</a></text>}
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Contact.Telephone2TelephoneNumber))
+        {
+            <div class="row">
+                <div class="col-sm-3">Phone 2:</div>
+                <div class="col-sm-9">
+                    @if (!string.IsNullOrEmpty(Model.Contact.Telephone1TelephoneNumber))
+                    { <text><a href="tel:@Model.Contact.Telephone2TelephoneNumber">@Model.Contact.Telephone2TelephoneNumber</a></text>}
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-sm-3">Email:</div>
+            <div class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Contact.Email1EmailAddress))
+                { <text><a href="mailto:@Model.Contact.Email1EmailAddress">@Model.Contact.Email1EmailAddress</a></text>}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="h4 col-sm-6" style="margin: 0px;">
+                    Lead Information
+                </div>
+                <div class="col-sm-6 text-right">
+                    <div class="container-fluid">
+                        <div class="row text-right">
+                            <div class="btn-group">
+                                <button id="convert" class="btn btn-xs btn-default"><span class="fa fa-bullseye"></span> Convert to Opportunity</button>
+                                <button id="edit" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</button>
+                                @if (!Model.Closed.HasValue)
+                                {
+                                    <button id="close" class="btn btn-xs btn-default"><span class="fa fa-times"></span> Close</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            @if (Model.Closed.HasValue)
+            {
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <span style="font-style: italic; font-weight: bold">This lead is closed.</span>
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-sm-3">
+                    Status:
+                </div>
+                <div class="col-sm-9">
+                    @Model.Status.Title
+                </div>
+            </div>
+            <div class="row" style="height: 10px;"></div>
+            <div class="row">
+                <div class="col-sm-3">
+                    Source Type:
+                </div>
+                <div class="col-sm-9">
+                    @Model.Source.Type.Title
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    Source:
+                </div>
+                <div class="col-sm-9">
+                    @Model.Source.Title
+                </div>
+            </div>
+            @if (Model.Source.Contact != null)
+            {
+                <div class="row">
+                    <div class="col-sm-3">
+                        Source Contact:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Source.Contact.DisplayName
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Source.AdditionalQuestion1))
+            {
+                <div class="row">
+                    <div class="col-sm-3">
+                        @(Model.Source.AdditionalQuestion1):
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Source.AdditionalData1
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Source.AdditionalQuestion2))
+            {
+                <div class="row">
+                    <div class="col-sm-3">
+                        @(Model.Source.AdditionalQuestion2):
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Source.AdditionalData2
+                    </div>
+                </div>
+            }
+            <div class="row" style="height: 10px;"></div>
+            @if (Model.Fee == null)
+            {
+                <div class="row">
+                    <div class="col-sm-3">
+                        Fee Eligible:
+                    </div>
+                    <div class="col-sm-9">
+                        Unknown
+                    </div>
+                </div>
+            }
+            else
+            {
+                if (Model.Fee.IsEligible)
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee To:
+                        </div>
+                        <div class="col-sm-9">
+                            @if (Model.Fee.To != null)
+                            {
+                                @Model.Fee.To.DisplayName
+                            }
+                        </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Fee Amount:
+                            </div>
+                            <div class="col-sm-9">
+                                @if (Model.Fee.Amount.HasValue)
+                                {
+                                    <text>@string.Format("{0:C2}", Model.Fee.Amount.Value)</text>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Fee Paid:
+                            </div>
+                            <div class="col-sm-9">
+                                @if (Model.Fee.Paid.HasValue)
+                                {
+                                    <text>@Model.Fee.Paid.Value.ToShortDateString()</text>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Fee Details:
+                            </div>
+                            <div class="col-sm-9">
+                                @Model.Fee.AdditionalData
+                            </div>
+                        </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Eligible:
+                        </div>
+                        <div class="col-sm-9">
+                            No
+                        </div>
+                    </div>
+                }
+            }
+            <div class="row" style="height: 10px;"></div>
+            <div class="row">
+                <div class="col-sm-3">
+                    Lead Details:
+                </div>
+                <div class="col-sm-9">
+                    @Model.Details
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+@using (Html.BeginForm("Close", "Leads", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            Are you sure you want to close this lead?<br />
+            <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Close</button>
+        </div>
+    </div>
+}

@@ -1,0 +1,1093 @@
+﻿@model OpenLawOffice.Web.ViewModels.Leads.CreateLeadViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Create Lead";
+    ViewBag.PageTitle = "Create Lead";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Leads">Leads</a></li>
+        <li><a href="/Leads/Create" class="active">Create</a></li>
+    </ul>
+}
+
+<script language="javascript">
+    $(function () {
+        $("input[name=optContact]:radio").change(function () {
+            $("#ExistingContactId").val('');
+            $("#ExistingContactDisplayName").val('');
+            if ($("input[name=optContact]:checked").val() == "existing") {
+                $("#optContactExistingPane").show();
+                $("#optContactNewPane").hide();
+            } else {
+                $("#optContactExistingPane").hide();
+                $("#optContactNewPane").show();
+            }
+        });
+        $("input[name=optSource]:radio").change(function () {
+            $("#ExistingSourceId").val('');
+            $("#ExisitingSourceTitle").val('');
+            if ($("input[name=optSource]:checked").val() == "existing") {
+                $("#optSourceExistingPane").show();
+                $("#optSourceNewPane").hide();
+            } else {
+                $("#optSourceExistingPane").hide();
+                $("#optSourceNewPane").show();
+            }
+        });
+        $("#optContactExistingPane").show();
+        $("#optContactNewPane").hide();
+        $("#optSourceExistingPane").show();
+        $("#optSourceNewPane").hide();
+    });
+    $(document).ready(function () {
+        $('#sourceContactModal').on('show.bs.modal', function () {
+            $("#ExistingSourceContactId").val('');
+            $("#ExistingSourceContactDisplayName").val('');
+        });
+        $('#feeToModal').on('show.bs.modal', function () {
+            $("#ExistingFeeToId").val('');
+            $("#ExistinFeeToDisplayName").val('');
+        });
+        $('#ExistingContactDisplayName').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#ExistingContactId").val(ui.item.Id);
+                $("#ExistingContactDisplayName").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#ExistingContactId").val(ui.item.Id);
+                $("#ExistingContactDisplayName").val(ui.item.DisplayName);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.DisplayName + "</a>")
+            .appendTo(ul);
+        };
+        $('#ExisitingSourceTitle').autocomplete({
+            source: "/LeadSources/ListTitleOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#ExistingSourceId").val(ui.item.Id);
+                $("#ExisitingSourceTitle").val(ui.item.Title);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#ExistingSourceId").val(ui.item.Id);
+                $("#ExisitingSourceTitle").val(ui.item.Title);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.Title + "</a>")
+            .appendTo(ul);
+        };
+        $('#ExistingSourceContactDisplayName').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#ExistingSourceContactId").val(ui.item.Id);
+                $("#ExistingSourceContactDisplayName").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#ExistingSourceContactId").val(ui.item.Id);
+                $("#ExistingSourceContactDisplayName").val(ui.item.DisplayName);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.DisplayName + "</a>")
+            .appendTo(ul);
+        };
+        $('#ExistingFeeToDisplayName').autocomplete({
+            source: "/Contacts/ListDisplayNameOnly",
+            minLength: 2,
+            focus: function (event, ui) {
+                $("#ExistingFeeToId").val(ui.item.Id);
+                $("#ExistingFeeToDisplayName").val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#ExistingFeeToId").val(ui.item.Id);
+                $("#ExistingFeeToDisplayName").val(ui.item.DisplayName);
+                return false;
+            }
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li>")
+            .append("<a>" + item.DisplayName + "</a>")
+            .appendTo(ul);
+        };
+    });
+    function contactSelector(title) {
+        $('#' + title + '_DisplayName').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_DisplayName').val('');
+        });
+        $('#' + title + '_DisplayName').autocomplete({
+            source: '/Contacts/ListDisplayNameOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_DisplayName').val(ui.item.DisplayName);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+            .append('<a>' + item.DisplayName + '</a>')
+            .appendTo(ul);
+        };
+    }
+    function leadSourceSelector(title) {
+        $('#' + title + '_Title').focus(function () {
+            $('#' + title + '_Id').val('');
+            $('#' + title + '_Title').val('');
+        });
+        $('#' + title + '_Title').autocomplete({
+            source: '/LeadSources/ListTitleOnly',
+            minLength: 2,
+            focus: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_Title').val(ui.item.Title);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#' + title + '_Id').val(ui.item.Id);
+                $('#' + title + '_Title').val(ui.item.Title);
+                return false;
+            }
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            return $('<li>')
+            .append('<a>' + item.Title + '</a>')
+            .appendTo(ul);
+        };
+    }
+</script>
+
+<style>
+/* Tab Navigation */
+.nav-tabs {
+    margin: 0;
+    padding: 0;
+    border: 0;    
+}
+.nav-tabs > li > a {
+    background: #DADADA;
+    border-radius: 0;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover {
+    background: #F5F5F5;
+}
+
+/* Tab Content */
+.tab-pane {
+    background: #F5F5F5;
+    box-shadow: 0 0 4px rgba(0,0,0,.4);
+    border-radius: 0;
+    text-align: center;
+    padding: 10px;
+}
+</style>
+
+@using (Html.BeginForm("Create", "Leads", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            New Lead
+        </div>
+        <div class="panel-body">
+                    <!-- tabs left -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">Contact</a></li>
+                <li role="presentation"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
+                <li role="presentation"><a href="#source" aria-controls="source" role="tab" data-toggle="tab">Source</a></li>
+                <li role="presentation"><a href="#fee" aria-controls="fee" role="tab" data-toggle="tab">Fee</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="contact">  
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">                  
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p>
+                                        <label class="radio-inline"><input type="radio" name="optContact" value="new" />New Contact</label>
+                                        <label class="radio-inline"><input type="radio" name="optContact" value="existing" checked />Existing Contact</label>
+                                    </p>                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12" id="optContactExistingPane">
+                                    @(Html.HiddenFor(model => model.ExistingContactId))
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Existing Contact</span>
+                                        @(Html.TextBoxFor(m => m.ExistingContactDisplayName, new { @class = "form-control" }))
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 text-left" id="optContactNewPane">
+                                    <h4>Classification</h4>
+                                    @(Html.HiddenFor(model => model.Contact.IsOurEmployee))
+                                    <div class="form-group">
+                                        <span class="control-label col-sm-2">Organization</span>
+                                        <div class="col-sm-10" style="padding-top: 7px;">
+                                            @(Html.CheckBoxFor(model => model.Contact.IsOrganization))Check to indicate that this contact is for an organization, not an individual.
+                                        </div>
+                                    </div>
+
+                                    <h4>Name</h4>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">First</span>
+                                                @(Html.TextBoxFor(m => m.Contact.GivenName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Middle</span>
+                                                @(Html.TextBoxFor(m => m.Contact.MiddleName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Last</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Surname, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Generation</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Generation, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Display Name<span class="required-field" title="Required Field">*</span></span>
+                                                @(Html.TextBoxFor(m => m.Contact.DisplayName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Referred By</span>
+                                                @(Html.TextBoxFor(m => m.Contact.ReferredByName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>Contact Information</h4>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            @(Html.HiddenFor(m => m.Contact.Email1DisplayName, new { @value = "Email" }))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Email</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Email1EmailAddress, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @(Html.HiddenFor(m => m.Contact.Telephone1DisplayName, new { @value = "Primary" }))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Phone 1</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Telephone1TelephoneNumber, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @(Html.HiddenFor(m => m.Contact.Telephone2DisplayName, new { @value = "Secondary" }))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Phone 2</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Telephone2TelephoneNumber, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            @(Html.HiddenFor(m => m.Contact.Fax1DisplayName, new { @value = "Fax" }))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Fax</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Fax1FaxNumber, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>Mailing Address</h4>
+                                    @(Html.HiddenFor(m => m.Contact.Address1DisplayName, new { @value = "Mailing Address" }))
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Line 1</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address1AddressStreet, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Line 2</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address1AddressLine2, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">City</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address1AddressCity, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">State</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address1AddressStateOrProvince, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Zip</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address1AddressPostalCode, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>Physical Address</h4>
+                                    @(Html.HiddenFor(m => m.Contact.Address1DisplayName, new { @value = "Physical Address" }))
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Line 1</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address2AddressStreet, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Line 2</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address2AddressLine2, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">City</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address2AddressCity, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">State</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address2AddressStateOrProvince, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Zip</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Address2AddressPostalCode, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <h4>Personal Details</h4>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Gender</span>
+                                                <select id="@(Html.IdFor(m => m.Contact.Gender))" name="@(Html.NameFor(m => m.Contact.Gender))" class="form-control">
+                                                    <option value="" selected></option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Birthday</span>
+                                                <input type="date" class="form-control" id="@(Html.IdFor(m => m.Contact.Birthday))" name="@(Html.NameFor(m => m.Contact.Birthday))" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Spouse's Name</span>
+                                                @(Html.TextBoxFor(m => m.Contact.SpouseName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Wedding</span>
+                                                <input type="date" class="form-control" id="@(Html.IdFor(m => m.Contact.Wedding))" name="@(Html.NameFor(m => m.Contact.Wedding))" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>Professional Information</h4>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Company Name</span>
+                                                @(Html.TextBoxFor(m => m.Contact.CompanyName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Title</span>
+                                                @(Html.TextBoxFor(m => m.Contact.Title, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Bar Number</span>
+                                                @(Html.TextBoxFor(m => m.Contact.BarNumber, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="status">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Status</span>
+                                        @(Html.DropDownListFor(x => x.Status.Id,
+                                    new SelectList(ViewBag.LeadStatusList, "Id", "Title"),
+                                    new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Details</span>
+                                        @(Html.TextBoxFor(m => m.Details, new { @class = "form-control" }))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="source">                    
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p>
+                                        <label class="radio-inline"><input type="radio" name="optSource" value="new" />New Source</label>
+                                        <label class="radio-inline"><input type="radio" name="optSource" value="existing" checked />Existing Source</label>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12" id="optSourceExistingPane">
+                                    @(Html.HiddenFor(model => model.ExistingSourceId))
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Existing Source</span>
+                                        @(Html.TextBoxFor(m => m.ExisitingSourceTitle, new { @class = "form-control" }))
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 text-left" id="optSourceNewPane">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Type</span>
+                                                @(Html.DropDownListFor(x => x.Source.Type.Id,
+                                                new SelectList(ViewBag.LeadSourceTypeList, "Id", "Title"),
+                                                new { @size = 1, @style = "width: 100%", @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Title<span class="required-field" title="Required Field">*</span></span>
+                                                @(Html.TextBoxFor(m => m.Source.Title, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Additional Field 1 Title</span>
+                                                @(Html.TextBoxFor(m => m.Source.AdditionalQuestion1, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Additional Field 1 Data</span>
+                                                @(Html.TextBoxFor(m => m.Source.AdditionalData1, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Additional Field 2 Title</span>
+                                                @(Html.TextBoxFor(m => m.Source.AdditionalQuestion2, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Additional Field 2 Data</span>
+                                                @(Html.TextBoxFor(m => m.Source.AdditionalData2, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            @(Html.HiddenFor(model => model.ExistingSourceContactId))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Existing Contact</span>
+                                                @(Html.TextBoxFor(m => m.ExistingSourceContactDisplayName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-info btn-default" data-toggle="modal" data-target="#sourceContactModal">Create New Contact</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="sourceContactModal" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Source Contact</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 text-left">
+                                                            <h4>Classification</h4>
+                                                            @(Html.HiddenFor(model => model.Contact.IsOurEmployee))
+                                                            <div class="form-group">
+                                                                <span class="control-label col-sm-2">Organization</span>
+                                                                <div class="col-sm-10" style="padding-top: 7px;">
+                                                                    @(Html.CheckBoxFor(model => model.Source.Contact.IsOrganization))Check to indicate that this contact is for an organization, not an individual.
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Name</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">First</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.GivenName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Middle</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.MiddleName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Last</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Surname, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Generation</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Generation, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Display Name<span class="required-field" title="Required Field">*</span></span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.DisplayName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Referred By</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.ReferredByName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Contact Information</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Source.Contact.Email1DisplayName, new { @value = "Email" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Email</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Email1EmailAddress, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Source.Contact.Telephone1DisplayName, new { @value = "Primary" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Phone 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Telephone1TelephoneNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Source.Contact.Telephone2DisplayName, new { @value = "Secondary" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Phone 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Telephone2TelephoneNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Source.Contact.Fax1DisplayName, new { @value = "Fax" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Fax</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Fax1FaxNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Mailing Address</h4>
+                                                            @(Html.HiddenFor(m => m.Source.Contact.Address1DisplayName, new { @value = "Mailing Address" }))
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address1AddressStreet, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address1AddressLine2, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">City</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address1AddressCity, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">State</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address1AddressStateOrProvince, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Zip</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address1AddressPostalCode, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Physical Address</h4>
+                                                            @(Html.HiddenFor(m => m.Source.Contact.Address1DisplayName, new { @value = "Physical Address" }))
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address2AddressStreet, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address2AddressLine2, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">City</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address2AddressCity, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">State</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address2AddressStateOrProvince, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Zip</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Address2AddressPostalCode, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Personal Details</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Gender</span>
+                                                                        <select id="@(Html.IdFor(m => m.Source.Contact.Gender))" name="@(Html.NameFor(m => m.Source.Contact.Gender))" class="form-control">
+                                                                            <option value="" selected></option>
+                                                                            <option value="Male">Male</option>
+                                                                            <option value="Female">Female</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Birthday</span>
+                                                                        <input type="date" class="form-control" id="@(Html.IdFor(m => m.Source.Contact.Birthday))" name="@(Html.NameFor(m => m.Source.Contact.Birthday))" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Spouse's Name</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.SpouseName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Wedding</span>
+                                                                        <input type="date" class="form-control" id="@(Html.IdFor(m => m.Source.Contact.Wedding))" name="@(Html.NameFor(m => m.Source.Contact.Wedding))" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Professional Information</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Company Name</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.CompanyName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Title</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.Title, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Bar Number</span>
+                                                                        @(Html.TextBoxFor(m => m.Source.Contact.BarNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="fee">
+                    <div class="panel panel-default" style="margin-bottom: 0;">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12 text-left">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Fee Eligible</span>
+                                                @(Html.CheckBoxFor(m => m.Fee.IsEligible, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Amount $</span>
+                                                @(Html.TextBoxFor(m => m.Fee.Amount, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Paid</span>
+                                                <input type="date" id="@Html.IdFor(m => m.Fee.Paid)" name="@Html.NameFor(m => m.Fee.Paid)" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Additional Data</span>
+                                                @(Html.TextBoxFor(m => m.Fee.AdditionalData, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6 text-center">
+                                            @(Html.HiddenFor(model => model.ExistingFeeToId))
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Existing Contact</span>
+                                                @(Html.TextBoxFor(m => m.ExistingFeeToDisplayName, new { @class = "form-control" }))
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-info btn-default" data-toggle="modal" data-target="#feeToModal">Create New Contact</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="feeToModal" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Fee Paid To Contact</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 text-left">
+                                                            <h4>Classification</h4>
+                                                            @(Html.HiddenFor(model => model.Fee.To.IsOurEmployee))
+                                                            <div class="form-group">
+                                                                <span class="control-label col-sm-2">Organization</span>
+                                                                <div class="col-sm-10" style="padding-top: 7px;">
+                                                                    @(Html.CheckBoxFor(model => model.Fee.To.IsOrganization))Check to indicate that this contact is for an organization, not an individual.
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Name</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">First</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.GivenName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Middle</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.MiddleName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Last</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Surname, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Generation</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Generation, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Display Name<span class="required-field" title="Required Field">*</span></span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.DisplayName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Referred By</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.ReferredByName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Contact Information</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Fee.To.Email1DisplayName, new { @value = "Email" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Email</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Email1EmailAddress, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Fee.To.Telephone1DisplayName, new { @value = "Primary" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Phone 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Telephone1TelephoneNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Fee.To.Telephone2DisplayName, new { @value = "Secondary" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Phone 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Telephone2TelephoneNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    @(Html.HiddenFor(m => m.Fee.To.Fax1DisplayName, new { @value = "Fax" }))
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Fax</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Fax1FaxNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Mailing Address</h4>
+                                                            @(Html.HiddenFor(m => m.Fee.To.Address1DisplayName, new { @value = "Mailing Address" }))
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address1AddressStreet, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address1AddressLine2, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">City</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address1AddressCity, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">State</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address1AddressStateOrProvince, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Zip</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address1AddressPostalCode, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Physical Address</h4>
+                                                            @(Html.HiddenFor(m => m.Fee.To.Address1DisplayName, new { @value = "Physical Address" }))
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 1</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address2AddressStreet, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Line 2</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address2AddressLine2, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">City</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address2AddressCity, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">State</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address2AddressStateOrProvince, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Zip</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Address2AddressPostalCode, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Personal Details</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Gender</span>
+                                                                        <select id="@(Html.IdFor(m => m.Fee.To.Gender))" name="@(Html.NameFor(m => m.Fee.To.Gender))" class="form-control">
+                                                                            <option value="" selected></option>
+                                                                            <option value="Male">Male</option>
+                                                                            <option value="Female">Female</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Birthday</span>
+                                                                        <input type="date" class="form-control" id="@(Html.IdFor(m => m.Fee.To.Birthday))" name="@(Html.NameFor(m => m.Fee.To.Birthday))" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Spouse's Name</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.SpouseName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Wedding</span>
+                                                                        <input type="date" class="form-control" id="@(Html.IdFor(m => m.Fee.To.Wedding))" name="@(Html.NameFor(m => m.Fee.To.Wedding))" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <h4>Professional Information</h4>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Company Name</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.CompanyName, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Title</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.Title, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">Bar Number</span>
+                                                                        @(Html.TextBoxFor(m => m.Fee.To.BarNumber, new { @class = "form-control" }))
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <button type="submit" class="btn btn-default btn-lg" style="margin-top: 10px; width: 200px;">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

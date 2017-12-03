@@ -380,6 +380,70 @@ namespace OpenLawOffice.Web.Controllers
                 ViewBag.NonBillableTime = nonBillableTimeSpan;
                 ViewBag.EffHourlyRate = string.Format("{0:C}", (((double)timeBilledDollars + (double)feesBilled) / timeBilledSpan.TotalHours));
 
+                // CRM
+                Common.Models.Opportunities.Opportunity opp = Data.Opportunities.Opportunity.GetForMatter(id, conn, false);
+
+                if (opp != null)
+                {
+                    viewModel.Opportunity = Mapper.Map<ViewModels.Opportunities.OpportunityViewModel>(opp);
+
+                    viewModel.Activities = new List<ViewModels.Activities.ActivityBaseViewModel>();
+                    Data.Opportunities.Opportunity.GetActivities(opp.Id.Value, conn, false).ForEach(x =>
+                    {
+                        viewModel.Activities.Add(Mapper.Map<ViewModels.Activities.ActivityBaseViewModel>(x));
+                    });
+
+                    opp.Lead = Data.Leads.Lead.Get(opp.Lead.Id.Value, conn, false);
+                    
+                    if (opp.Account != null && opp.Account.Id.HasValue)
+                    {
+                        opp.Account = Data.Contacts.Contact.Get(opp.Account.Id.Value, conn, false);
+                        viewModel.Opportunity.Account = Mapper.Map<ViewModels.Contacts.ContactViewModel>(opp.Account);
+                    }
+
+                    if (opp.Lead != null)
+                    {
+                        viewModel.Opportunity.Lead = Mapper.Map<ViewModels.Leads.LeadViewModel>(opp.Lead);
+
+                        if (opp.Lead.Contact != null && opp.Lead.Contact.Id.HasValue)
+                        {
+                            opp.Lead.Contact = Data.Contacts.Contact.Get(opp.Lead.Contact.Id.Value, conn, false);
+                            viewModel.Opportunity.Lead.Contact = Mapper.Map<ViewModels.Contacts.ContactViewModel>(opp.Lead.Contact);
+                        }
+
+                        if (opp.Lead.Source != null && opp.Lead.Source.Id.HasValue)
+                        {
+                            opp.Lead.Source = Data.Leads.LeadSource.Get(opp.Lead.Source.Id.Value, conn, false);
+                            viewModel.Opportunity.Lead.Source = Mapper.Map<ViewModels.Leads.LeadSourceViewModel>(opp.Lead.Source);
+
+                            if (opp.Lead.Source.Type != null && opp.Lead.Source.Type.Id.HasValue)
+                            {
+                                opp.Lead.Source.Type = Data.Leads.LeadSourceType.Get(opp.Lead.Source.Type.Id.Value, conn, false);
+                                viewModel.Opportunity.Lead.Source.Type = Mapper.Map<ViewModels.Leads.LeadSourceTypeViewModel>(opp.Lead.Source.Type);
+                            }
+                            if (opp.Lead.Source.Contact != null && opp.Lead.Source.Contact.Id.HasValue)
+                            {
+                                opp.Lead.Source.Contact = Data.Contacts.Contact.Get(opp.Lead.Source.Contact.Id.Value, conn, false);
+                                viewModel.Opportunity.Lead.Source.Contact = Mapper.Map<ViewModels.Contacts.ContactViewModel>(opp.Lead.Source.Contact);
+                            }
+                        }
+
+                        if (opp.Lead.Fee != null && opp.Lead.Fee.Id.HasValue)
+                        {
+                            opp.Lead.Fee = Data.Leads.LeadFee.Get(opp.Lead.Fee.Id.Value, conn, false);
+                            viewModel.Opportunity.Lead.Fee = Mapper.Map<ViewModels.Leads.LeadFeeViewModel>(opp.Lead.Fee);
+
+                            if (opp.Lead.Fee.To != null && opp.Lead.Fee.To.Id.HasValue)
+                            {
+                                opp.Lead.Fee.To = Data.Contacts.Contact.Get(opp.Lead.Fee.To.Id.Value, conn, false);
+                                viewModel.Opportunity.Lead.Fee.To = Mapper.Map<ViewModels.Contacts.ContactViewModel>(opp.Lead.Fee.To);
+                            }
+                        }
+                    }
+                }
+
+
+
                 viewModel.Notes = new List<ViewModels.Notes.NoteViewModel>();
                 Data.Notes.NoteMatter.ListForMatter(id, conn, false).ForEach(x =>
                 {

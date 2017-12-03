@@ -93,6 +93,10 @@ namespace OpenLawOffice.Web.ViewModels.Matters
         public decimal TotalValue { get; set; }
         public decimal EffectiveHourlyRate { get; set; }
 
+        // -- CRM
+        public ViewModels.Opportunities.OpportunityViewModel Opportunity { get; set; }
+        public List<ViewModels.Activities.ActivityBaseViewModel> Activities { get; set; }
+
         public List<ViewModels.Tasks.TaskViewModel> Tasks { get; set; }
         public List<ViewModels.Notes.NoteViewModel> Notes { get; set; }
         public List<ViewModels.Notes.NoteTaskViewModel> TaskNotes { get; set; }
@@ -232,7 +236,9 @@ namespace OpenLawOffice.Web.ViewModels.Matters
                 .ForMember(dst => dst.TimeBillable, opt => opt.Ignore())
                 .ForMember(dst => dst.MoneyBillable, opt => opt.Ignore())
                 .ForMember(dst => dst.TotalValue, opt => opt.Ignore())
-                .ForMember(dst => dst.EffectiveHourlyRate, opt => opt.Ignore());
+                .ForMember(dst => dst.EffectiveHourlyRate, opt => opt.Ignore())
+                .ForMember(dst => dst.Opportunity, opt => opt.Ignore())
+                .ForMember(dst => dst.Activities, opt => opt.Ignore());
 
             Mapper.CreateMap<MatterViewModel, Common.Models.Matters.Matter>()
                 .ForMember(dst => dst.Created, opt => opt.MapFrom(src => src.Created))

@@ -36,8 +36,17 @@
         $("#timeCategories").click(function () {
             window.location = '/TimeCategories';
         })
-        $("#userManagement").click(function () {
-            window.location = '/Admin';
+        $("#billingGroups").click(function () {
+            window.location = '/BillingGroups';
+        })
+        $("#leadSourceTypes").click(function () {
+            window.location = '/LeadSourceTypes';
+        })
+        $("#leadStatuses").click(function () {
+            window.location = '/LeadStatuses';
+        })
+        $("#opportunityStages").click(function () {
+            window.location = '/OpportunityStages';
         })
         $("#changePassword").click(function () {
             window.location = '/Account/ChangePassword';
@@ -56,15 +65,26 @@
         <div class="panel panel-default">
             <div class="panel-heading">System Settings</div>
             <div class="panel-body text-center">
-                <div class="btn-group-vertical">
-                    <button id="matterTypes" class="btn btn-default"><span class="fa fa-folder-o fa-fw"></span> Matter Types</button>
-                    <button id="taskTemplates" class="btn btn-default"><span class="fa fa-clone fa-fw"></span> Task Templates</button>
-                    <button id="courtTypes" class="btn btn-default"><span class="fa fa-balance-scale fa-fw"></span> Court Types</button>
-                    <button id="courtJurisdictions" class="btn btn-default"><span class="fa fa-bank fa-fw"></span> Court Juris.</button>
-                    <button id="courtCities" class="btn btn-default"><span class="fa fa-map-o fa-fw"></span> Court Cities</button>
-                    <button id="billingRates" class="btn btn-default"><span class="fa fa-hourglass-half fa-fw"></span> Billing Rates</button>
-                    <button id="billingGroups" class="btn btn-default"><span class="fa fa-group fa-fw"></span> Billing Groups</button>
-                    <button id="timeCategories" class="btn btn-default"><span class="fa fa-group fa-fw"></span> Time Categories</button>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="btn-group-vertical">
+                            <button id="matterTypes" class="btn btn-default"><span class="fa fa-folder-o fa-fw"></span> Matter Types</button>
+                            <button id="taskTemplates" class="btn btn-default"><span class="fa fa-clone fa-fw"></span> Task Templates</button>
+                            <button id="courtTypes" class="btn btn-default"><span class="fa fa-balance-scale fa-fw"></span> Court Types</button>
+                            <button id="courtJurisdictions" class="btn btn-default"><span class="fa fa-bank fa-fw"></span> Court Juris.</button>
+                            <button id="courtCities" class="btn btn-default"><span class="fa fa-map-o fa-fw"></span> Court Cities</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="btn-group-vertical">
+                            <button id="billingRates" class="btn btn-default"><span class="fa fa-hourglass-half fa-fw"></span> Billing Rates</button>
+                            <button id="billingGroups" class="btn btn-default"><span class="fa fa-group fa-fw"></span> Billing Groups</button>
+                            <button id="timeCategories" class="btn btn-default"><span class="fa fa-hourglass-o fa-fw"></span> Time Categories</button>
+                            <button id="leadSourceTypes" class="btn btn-default"><span class="fa fa-sign-in fa-fw"></span> Lead Source Types</button>
+                            <button id="leadStatuses" class="btn btn-default"><span class="fa fa-heartbeat fa-fw"></span> Lead Statuses</button>
+                            <button id="opportunityStages" class="btn btn-default"><span class="fa fa-bullseye fa-fw"></span> Opportunity Stages</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

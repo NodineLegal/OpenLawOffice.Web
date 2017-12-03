@@ -1,0 +1,609 @@
+﻿@model OpenLawOffice.Web.ViewModels.Opportunities.OpportunityViewModel
+
+@{
+    Layout = "~/Views/Shared/_NewLayout.cshtml";
+    ViewBag.Title = "Opportunity Details";
+    ViewBag.PageTitle = "Opportunity Details";
+}
+
+@section Breadcrumb {
+    <ul class="breadcrumb">
+        <li><a href="/Opportunities">Opportunities</a></li>
+        <li>Opportunity: <a href="/Opportunities/Details/@Model.Id" class="active">@(Model.Account.DisplayName)</a></li>
+    </ul>
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        $("#conflicts").click(function () {
+            window.location = '/Contacts/Conflicts/@(Model.Account.Id)';
+        })
+        $("#matters").click(function () {
+            window.location = '/Contacts/Matters/@(Model.Account.Id)';
+        })
+        $("#edit").click(function () {
+            window.location = '/Opportunities/Edit/@(Model.Id)';
+        })
+        $("#convert").click(function () {
+            window.location = '/Opportunities/Convert/@(Model.Id)';
+        })
+        @if (Model.Matter != null)
+        {
+        <text>$("#gotomatter").click(function () {
+            window.location = '/Matters/Details/@(Model.Matter.Id)?preventRedirect=True';
+        })</text>
+        }
+        $("#close").click(function () {
+            window.location = '/Opportunities/Close/@(Model.Id)';
+        })
+        $("#phonecall").click(function () {
+            window.location = '/ActivityPhonecalls/Create?regopportunityid=@(Model.Id)';
+        })
+        $("#email").click(function () {
+            window.location = '/ActivityEmails/Create?regopportunityid=@(Model.Id)';
+        })
+        $("#letter").click(function () {
+            window.location = '/ActivityLetters/Create?regopportunityid=@(Model.Id)';
+        })
+        $("#task").click(function () {
+            window.location = '/ActivityTasks/Create?regopportunityid=@(Model.Id)';
+        })
+    })
+</script>
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Account: @Model.Account.DisplayName
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    <button id="conflicts" class="btn btn-xs btn-default"><span class="fa fa-shield"></span> Conflicts</button>
+                                    <button id="matters" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> Matters</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">Name:</div>
+                    <div class="col-sm-9">
+                        @if (Model.Account.IsOrganization)
+                        {
+                            @Model.Account.DisplayName
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(Model.Account.GivenName))
+                            {
+                                <text>@Model.Account.GivenName </text>
+                            }
+                            if (!string.IsNullOrEmpty(Model.Account.MiddleName))
+                            {
+                                <text>@Model.Account.MiddleName </text>
+                            }
+                            if (!string.IsNullOrEmpty(Model.Account.Surname))
+                            {
+                                <text>@Model.Account.Surname </text>
+                            }
+                            if (!string.IsNullOrEmpty(Model.Account.Generation))
+                            {
+                                <text>@Model.Account.Generation </text>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        @if (!string.IsNullOrEmpty(Model.Account.Address2AddressStreet))
+                    {<text>Mailing </text>}Address:
+                </div>
+                <div class="col-sm-9">
+                    @if (!string.IsNullOrEmpty(Model.Account.Address1AddressStreet) && !string.IsNullOrEmpty(Model.Account.Address1AddressCity))
+                    {
+                        string alink = Model.Account.Address1AddressStreet;
+                        if (!string.IsNullOrEmpty(Model.Account.Address1AddressLine2))
+                        {
+                            alink += " " + Model.Account.Address1AddressLine2;
+                        }
+                        if (!string.IsNullOrEmpty(Model.Account.Address1AddressCity))
+                        {
+                            alink += ", " + Model.Account.Address1AddressCity;
+                        }
+                        if (!string.IsNullOrEmpty(Model.Account.Address1AddressStateOrProvince))
+                        {
+                            alink += ", " + Model.Account.Address1AddressStateOrProvince;
+                        }
+                        <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                                @Model.Account.Address1AddressStreet<br />
+                                @if (!string.IsNullOrEmpty(Model.Account.Address1AddressLine2))
+                                {<text>@Model.Account.Address1AddressLine2<br /></text>}
+                                @Model.Account.Address1AddressCity, @Model.Account.Address1AddressStateOrProvince @Model.Account.Address1AddressPostalCode
+                            </a></text>
+                    }
+                    else
+                    {
+                        <text>
+                            @Model.Account.Address1AddressStreet<br />
+                            @if (!string.IsNullOrEmpty(Model.Account.Address1AddressLine2))
+                            {<text>@Model.Account.Address1AddressLine2<br /></text>}
+                            @Model.Account.Address1AddressCity, @Model.Account.Address1AddressStateOrProvince @Model.Account.Address1AddressPostalCode
+                        </text>
+                    }
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Account.Address2AddressStreet))
+            {
+                <div class="row">
+                    <div class="col-sm-3">Physical Address:</div>
+                    <div class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.Account.Address2AddressStreet) && !string.IsNullOrEmpty(Model.Account.Address2AddressCity))
+                        {
+                            string alink = Model.Account.Address2AddressStreet;
+                            if (!string.IsNullOrEmpty(Model.Account.Address2AddressLine2))
+                            {
+                                alink += " " + Model.Account.Address2AddressLine2;
+                            }
+                            if (!string.IsNullOrEmpty(Model.Account.Address2AddressCity))
+                            {
+                                alink += ", " + Model.Account.Address2AddressCity;
+                            }
+                            if (!string.IsNullOrEmpty(Model.Account.Address2AddressStateOrProvince))
+                            {
+                                alink += ", " + Model.Account.Address2AddressStateOrProvince;
+                            }
+                            <text><a href="http://maps.google.com/?q=@alink" target="_blank">
+                                    @Model.Account.Address2AddressStreet<br />
+                                    @if (!string.IsNullOrEmpty(Model.Account.Address2AddressLine2))
+                                    {<text>@Model.Account.Address2AddressLine2<br /></text>}
+                                    @Model.Account.Address2AddressCity, @Model.Account.Address2AddressStateOrProvince @Model.Account.Address2AddressPostalCode
+                                </a></text>
+                        }
+                        else
+                        {
+                            <text>
+                                @Model.Account.Address2AddressStreet<br />
+                                @if (!string.IsNullOrEmpty(Model.Account.Address2AddressLine2))
+                                {<text>@Model.Account.Address2AddressLine2<br /></text>}
+                                @Model.Account.Address2AddressCity, @Model.Account.Address2AddressStateOrProvince @Model.Account.Address2AddressPostalCode
+                            </text>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-sm-3">
+                    @if (!string.IsNullOrEmpty(Model.Account.Telephone2TelephoneNumber))
+                {<text>Phone 1</text>}
+                else
+                {<text>Phone</text>}:
+            </div>
+            <div class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Account.Telephone1TelephoneNumber))
+                { <text><a href="tel:@Model.Account.Telephone1TelephoneNumber">@Model.Account.Telephone1TelephoneNumber</a></text>}
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Account.Telephone2TelephoneNumber))
+        {
+            <div class="row">
+                <div class="col-sm-3">Phone 2:</div>
+                <div class="col-sm-9">
+                    @if (!string.IsNullOrEmpty(Model.Account.Telephone1TelephoneNumber))
+                    { <text><a href="tel:@Model.Account.Telephone2TelephoneNumber">@Model.Account.Telephone2TelephoneNumber</a></text>}
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-sm-3">Email:</div>
+            <div class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.Account.Email1EmailAddress))
+                { <text><a href="mailto:@Model.Account.Email1EmailAddress">@Model.Account.Email1EmailAddress</a></text>}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">Involved:</div>
+            <div class="col-sm-9">
+                @foreach(OpenLawOffice.Web.ViewModels.Contacts.ContactViewModel contact in Model.Contacts)
+                {
+                    <text><a href="/Contacts/@contact.Id.Value">@contact.DisplayName</a> </text>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @if (Model.Matter == null || !Model.Matter.Id.HasValue)
+                {
+                <div class="row">
+                    <div class="h4 col-sm-6" style="margin: 0px;">
+                        Opportunity Information
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <div class="container-fluid">
+                            <div class="row text-right">
+                                <div class="btn-group">
+                                    @if (Model.Matter == null)
+                                    {
+                                        <button id="convert" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> Convert to Matter</button>
+                                    }
+                                    else
+                                    {
+                                        <button id="gotoop" class="btn btn-xs btn-default"><span class="fa fa-briefcase"></span> View Matter</button>
+                                    }
+                                    <button id="edit" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</button>
+                                    <button id="close" class="btn btn-xs btn-default"><span class="fa fa-times"></span> Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+                else
+                {
+                <span class="h4">
+                    Opportunity Information
+                </span>
+                }
+            </div>
+            <div class="panel-body">
+                @if (Model.Closed.HasValue)
+                {
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <span style="font-style: italic; font-weight: bold; color: red;">This opportunity is closed.</span>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-sm-3">
+                        Stage:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Stage.Title
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Probability:
+                    </div>
+                    <div class="col-sm-9">
+                        @if (Model.Probability.HasValue)
+                        {
+                            <text>@(Model.Probability.Value.ToString("0.#"))%</text>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Value:
+                    </div>
+                    <div class="col-sm-9">
+                        @if (Model.Amount.HasValue)
+                        {
+                            <text>@string.Format("{0:C2}", Model.Amount.Value)</text>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Closed:
+                    </div>
+                    <div class="col-sm-9">
+                        @if (Model.Closed.HasValue)
+                        {
+                            <text>@Model.Closed.Value.ToShortDateString()</text>
+                        }
+                        else
+                        {
+                            <text>Open</text>
+                        }
+                    </div>
+                </div>
+                @if (Model.Matter != null && Model.Matter.Id.HasValue)
+                {
+                <div class="row">
+                    <div class="col-sm-3">
+                        Matter:
+                    </div>
+                    <div class="col-sm-9">
+                        @(Html.ActionLink(Model.Matter.Title, "Details", "Matters", new { Id = Model.Matter.Id.Value }))
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="h4">
+                    Lead Information
+                </span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        Contact:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Lead.Contact.DisplayName
+                    </div>
+                </div>
+                <div class="row" style="height: 10px;"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Status:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Lead.Status.Title
+                    </div>
+                </div>
+                <div class="row" style="height: 10px;"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Source Type:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Lead.Source.Type.Title
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Source:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Lead.Source.Title
+                    </div>
+                </div>
+                @if (Model.Lead.Source.Contact != null)
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Source Contact:
+                        </div>
+                        <div class="col-sm-9">
+                            @Model.Lead.Source.Contact.DisplayName
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Lead.Source.AdditionalQuestion1))
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @(Model.Lead.Source.AdditionalQuestion1):
+                        </div>
+                        <div class="col-sm-9">
+                            @Model.Lead.Source.AdditionalData1
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Lead.Source.AdditionalQuestion2))
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            @(Model.Lead.Source.AdditionalQuestion2):
+                        </div>
+                        <div class="col-sm-9">
+                            @Model.Lead.Source.AdditionalData2
+                        </div>
+                    </div>
+                }
+                <div class="row" style="height: 10px;"></div>
+                @if (Model.Lead.Fee == null)
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            Fee Eligible:
+                        </div>
+                        <div class="col-sm-9">
+                            Unknown
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    if (Model.Lead.Fee.IsEligible)
+                    {
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Fee To:
+                            </div>
+                            <div class="col-sm-9">
+                                @Model.Lead.Fee.To.DisplayName
+                            </div>
+                        </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Fee Amount:
+                                </div>
+                                <div class="col-sm-9">
+                                    @if (Model.Lead.Fee.Amount.HasValue)
+                                    {
+                                        <text>@string.Format("{0:C2}", Model.Lead.Fee.Amount.Value)</text>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Fee Paid:
+                                </div>
+                                <div class="col-sm-9">
+                                    @if (Model.Lead.Fee.Paid.HasValue)
+                                    {
+                                        <text>@Model.Lead.Fee.Paid.Value.ToShortDateString()</text>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    Fee Details:
+                                </div>
+                                <div class="col-sm-9">
+                                    @Model.Lead.Fee.AdditionalData
+                                </div>
+                            </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-sm-3">
+                                Fee Eligible:
+                            </div>
+                            <div class="col-sm-9">
+                                No
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="row" style="height: 10px;"></div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        Lead Details:
+                    </div>
+                    <div class="col-sm-9">
+                        @Model.Lead.Details
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="h4 col-sm-6" style="margin: 0px;">
+                Active Activities
+            </div>
+            <div class="col-sm-6 text-right">
+                <div class="container-fluid">
+                    <div class="row text-right">
+                        <div class="btn-group">
+                            <button id="phonecall" class="btn btn-xs btn-default"><span class="fa fa-phone"></span> Phonecall</button>
+                            <button id="email" class="btn btn-xs btn-default"><span class="fa fa-envelope-o"></span> Email</button>
+                            <button id="letter" class="btn btn-xs btn-default"><span class="fa fa-pencil-square-o"></span> Letter</button>
+                            <button id="task" class="btn btn-xs btn-default"><span class="fa fa-tasks"></span> Task</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table table-striped table-hover table-condensed" style="font-size: 12px">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1 text-center" data-field="functions" data-sortable="false">
+
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="date" data-sortable="true">
+                                Date
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="type" data-sortable="true">
+                                Type
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="type" data-sortable="true">
+                                Status
+                            </th>
+                            <th data-field="details" data-sortable="false">
+                                Subject: <small class="text-muted">Body</small>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (OpenLawOffice.Web.ViewModels.Activities.ActivityBaseViewModel activity in Model.Activities)
+                        {
+                        <tr>
+                            <td>
+                                <a href="/Activities/Edit/@activity.Id" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                <a href="/Activities/Details/@activity.Id" class="btn btn-xs btn-default"><i class="fa fa-info"></i></a>
+                            </td>
+                            <td>
+                                @if (activity.Due.HasValue)
+                                {
+                                    <text>@String.Format("{0:g}", activity.Due.Value)</text>
+                                }
+                            </td>
+                            <td class="text-nowrap">@activity.Type.Title</td>
+                            <td class="text-nowrap">@activity.StatusReason.Primary - @activity.StatusReason.Secondary</td>
+                            <td>@activity.Subject: <small class="text-muted">@activity.Body</small></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="h4 col-sm-6" style="margin: 0px;">
+                Inactive Activities
+            </div>
+            <div class="col-sm-6 text-right">
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table table-striped table-hover table-condensed" style="font-size: 12px">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1 text-center" data-field="functions" data-sortable="false">
+
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="date" data-sortable="true">
+                                Date
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="type" data-sortable="true">
+                                Type
+                            </th>
+                            <th class="col-sm-1 text-center" data-field="type" data-sortable="true">
+                                Status
+                            </th>
+                            <th data-field="details" data-sortable="false">
+                                Subject: <small class="text-muted">Body</small>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (OpenLawOffice.Web.ViewModels.Activities.ActivityBaseViewModel activity in Model.InactiveActivities)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="/Activities/Edit/@activity.Id" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                    <a href="/Activities/Details/@activity.Id" class="btn btn-xs btn-default"><i class="fa fa-info"></i></a>
+                                </td>
+                                <td>
+                                    @if (activity.Due.HasValue)
+                                    {
+                                        <text>@String.Format("{0:g}", activity.Due.Value)</text>
+                                    }
+                                </td>
+                                <td class="text-nowrap">@activity.Type.Title</td>
+                                <td class="text-nowrap">@activity.StatusReason.Primary - @activity.StatusReason.Secondary</td>
+                                <td>@activity.Subject: <small class="text-muted">@activity.Body</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
