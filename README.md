@@ -11,11 +11,11 @@ The below are currently considered the prerequisites and this software is only t
 * Postgresql
 
 ### Step 2 - Database
-Create a database within your postgresql server.  It doesn't matter what you call it, you can change the name in the web.config disucssed later.
+Create a database within your postgresql server.  It doesn't matter what you call it, you can change the name in the web.config discussed later.
 
-### Step 3 - Configured web.config
+### Step 3 - Configure web.config
 * Modify your connection string <add name="Postgres": providerName="Npgsql" connectionString="server=...  <-- your Postgresql database information needs to go here
-* Modify the elements of the openLawOffice section: <openLawOffice>...</openLawOffice> <-- your configuration settings need entered in here
+* Modify the elements of the openLawOffice section: <openLawOffice>...</openLawOffice> <-- your configuration settings need to be entered here
 
 ### Step 4 - Installation
 Launch the site.  You will be directed to the guided installation procedures.  You will create your initial account which will be an administrator account.
@@ -24,4 +24,4 @@ Launch the site.  You will be directed to the guided installation procedures.  Y
 After you login, OLO will tell you what it needs you to do, when to do it and how to do it in order to finish your initial configuration.
 
 ### Step 6 - Let me know
-If you find problems with installation, file an issue and let me know.
+If you find problems with the installation, file an issue and let me know.
